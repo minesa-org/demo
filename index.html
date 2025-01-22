@@ -3,83 +3,40 @@
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta charset="utf-8" />
-
-    <!-- Prevent caching -->
     <meta http-equiv="pragma" content="no-cache" />
 
     <title>GameMaker Game</title>
 
     <style>
-        /* Responsive body styling */
-        body {
-            background: #000;
-            color: #cccccc;
+        /* Ensure the body and HTML occupy the entire viewport */
+        html, body {
             margin: 0;
             padding: 0;
-            border: 0;
             width: 100vw;
             height: 100vh;
+            background: #000;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
         }
 
-        /* Responsive canvas styling */
+        /* Ensure the container and canvas also stretch to fit */
+        .gm4html5_div_class {
+            width: 100%;
+            height: 100%;
+        }
+
         canvas {
+            display: block;
             width: 100%;
             height: 100%;
             image-rendering: optimizeSpeed;
             -webkit-interpolation-mode: nearest-neighbor;
             -ms-touch-action: none;
             touch-action: none;
-        }
-
-        /* Fullscreen adjustments */
-        :-webkit-full-screen canvas {
-            width: 100%;
-            height: 100%;
-        }
-
-        :-webkit-full-screen {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Container styling */
-        .gm4html5_div_class {
-            margin: 0;
-            padding: 0;
-            border: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Login screen styles (optional) */
-        div.gm4html5_login {
-            padding: 20px;
-            position: absolute;
-            border: solid 2px #000000;
-            background-color: #404040;
-            color: #00ff00;
-            border-radius: 15px;
-            box-shadow: #101010 20px 20px 40px;
-        }
-
-        div.gm4html5_cancel_button {
-            float: right;
-        }
-
-        div.gm4html5_login_button {
-            float: left;
-        }
-
-        div.gm4html5_login_header {
-            text-align: center;
         }
     </style>
 </head>
