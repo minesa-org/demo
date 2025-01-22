@@ -23,16 +23,15 @@
             align-items: center;
         }
 
-        /* Ensure the container and canvas also stretch to fit */
+        /* Container styling */
         .gm4html5_div_class {
             width: 100%;
             height: 100%;
         }
 
+        /* Prevent canvas overflow and ensure scaling */
         canvas {
             display: block;
-            width: 100%;
-            height: 100%;
             image-rendering: optimizeSpeed;
             -webkit-interpolation-mode: nearest-neighbor;
             -ms-touch-action: none;
@@ -43,8 +42,8 @@
 
 <body>
     <div class="gm4html5_div_class" id="gm4html5_div_id">
-        <!-- Game canvas -->
-        <canvas id="canvas">
+        <!-- Game canvas with explicit attributes -->
+        <canvas id="canvas" width="1920" height="1080">
             <p>Your browser doesn't support HTML5 canvas.</p>
         </canvas>
     </div>
@@ -52,8 +51,16 @@
     <!-- Game script -->
     <script type="text/javascript" src="html5game/dbz1.js?cachebust=1809559606"></script>
     <script>
-        // Initialize the game on window load
         window.onload = GameMaker_Init;
+
+        function resizeCanvas() {
+            const canvas = document.getElementById('canvas');
+            canvas.style.width = window.innerWidth + 'px';
+            canvas.style.height = window.innerHeight + 'px';
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
     </script>
 </body>
 
