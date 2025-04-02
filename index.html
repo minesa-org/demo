@@ -1,67 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0" />
+        <title>Goblin Game</title>
+        <style>
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background: #222;
+                margin: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas
+            id="gameCanvas"
+            width="290.6"
+            height="248.15"></canvas>
+        <script>
+            const canvas = document.getElementById("gameCanvas");
+            const ctx = canvas.getContext("2d");
 
-<head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <meta charset="utf-8" />
-    <meta http-equiv="pragma" content="no-cache" />
+            let currentAnim = "relax";
+            let frame = 0;
+            let direction = -1;
+            let position = canvas.width / 2;
+            let speed = 5;
+            let isMovingLeft = false;
+            let isMovingRight = false;
+            let isAttacking = false;
+            let isAnimationCompleted = true;
 
-    <title>GameMaker Game</title>
+            const animations = {
+                relax: {
+                    frames: Array.from(
+                        { length: 116 - 74 + 1 },
+                        (_, i) => `assets/goblin/relax/${74 + i}.svg`
+                    ),
+                    loop: true,
+                },
+                run_start: {
+                    frames: Array.from(
+                        { length: 149 - 142 + 1 },
+                        (_, i) => `assets/goblin/run/start/${142 + i}.svg`
+                    ),
+                    loop: false,
+                },
+                run_loop: {
+                    frames: Array.from(
+                        { length: 161 - 150 + 1 },
+                        (_, i) => `assets/goblin/run/loop/${150 + i}.svg`
+                    ),
+                    loop: true,
+                },
+                run_end: {
+                    frames: Array.from(
+                        { length: 174 - 162 + 1 },
+                        (_, i) => `assets/goblin/run/end/${162 + i}.svg`
+                    ),
+                    loop: false,
+                },
+                melee: {
+                    frames: Array.from(
+                        { length: 534 - 501 + 1 },
+                        (_, i) => `assets/goblin/melee/${501 + i}.svg`
+                    ),
+                    loop: false,
+                },
+            };
 
-    <style>
-        /* Ensure the body and HTML occupy the entire viewport */
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #000;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+            const loadedImages = {};
 
-        /* Container styling */
-        .gm4html5_div_class {
-            width: 100%;
-            height: 100%;
-        }
+            function loadImage(url) {
+                if (loadedImages[url])
+                    return Promise.resolve(loadedImages[url]);
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.src = url;
+                    img.onload = () => {
+                        loadedImages[url] = img;
+                        resolve(img);
+                    };
+                    img.onerror = () => {
+                        console.error("Failed to load:", url);
+                        reject(url);
+                    };
+                });
+            }
 
-        /* Prevent canvas overflow and ensure scaling */
-        canvas {
-            display: block;
-            image-rendering: optimizeSpeed;
-            -webkit-interpolation-mode: nearest-neighbor;
-            -ms-touch-action: none;
-            touch-action: none;
-        }
-    </style>
-</head>
+            function preloadImages() {
+                for (const animName in animations) {
+                    animations[animName].frames.forEach((url) => {
+                        loadImage(url).catch((err) =>
+                            console.error("Preload error:", err)
+                        );
+                    });
+                }
+                console.log("Started preloading images");
+            }
 
-<body>
-    <div class="gm4html5_div_class" id="gm4html5_div_id">
-        <!-- Game canvas with explicit attributes -->
-        <canvas id="canvas" width="1920" height="1080">
-            <p>Your browser doesn't support HTML5 canvas.</p>
-        </canvas>
-    </div>
+            async function drawFrame() {
+                if (!animations[currentAnim]) {
+                    console.error("Invalid animation:", currentAnim);
+                    return;
+                }
+                const frameUrl = animations[currentAnim].frames[frame];
+                if (!frameUrl) {
+                    console.error(
+                        "Invalid frame:",
+                        frame,
+                        "for animation:",
+                        currentAnim
+                    );
+                    return;
+                }
+                try {
+                    const img = await loadImage(frameUrl);
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.save();
+                    if (direction === 1) {
+                        ctx.translate(canvas.width, 0);
+                        ctx.scale(-1, 1);
+                    }
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    ctx.restore();
+                } catch (error) {
+                    console.error("Error drawing frame:", error, frameUrl);
+                }
+            }
 
-    <!-- Game script -->
-    <script type="text/javascript" src="html5game/dbz1.js?cachebust=1809559606"></script>
-    <script>
-        window.onload = GameMaker_Init;
+            function updatePosition() {
+                if (isMovingLeft) {
+                    position -= speed;
+                    direction = -1;
+                } else if (isMovingRight) {
+                    position += speed;
+                    direction = 1;
+                }
+                position = Math.max(0, Math.min(position, canvas.width - 50));
+            }
 
-        function resizeCanvas() {
-            const canvas = document.getElementById('canvas');
-            canvas.style.width = window.innerWidth + 'px';
-            canvas.style.height = window.innerHeight + 'px';
-        }
+            function changeAnimation(newAnim) {
+                if (currentAnim === newAnim) return;
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-    </script>
-</body>
+                currentAnim = newAnim;
+                frame = 0;
+                isAnimationCompleted = false;
+            }
 
+            function nextFrame() {
+                const animation = animations[currentAnim];
+                frame++;
+                if (frame >= animation.frames.length) {
+                    isAnimationCompleted = true;
+                    if (animation.loop) {
+                        frame = 0;
+                    } else {
+                        frame = animation.frames.length - 1;
+                        if (currentAnim === "run_start") {
+                            if (isMovingLeft || isMovingRight) {
+                                changeAnimation("run_loop");
+                            } else {
+                                changeAnimation("run_end");
+                            }
+                        } else if (currentAnim === "run_end") {
+                            changeAnimation("relax");
+                        } else if (currentAnim === "melee") {
+                            isAttacking = false;
+                            if (isMovingLeft || isMovingRight) {
+                                changeAnimation("run_start");
+                            } else {
+                                changeAnimation("relax");
+                            }
+                        }
+                    }
+                }
+            }
+
+            document.addEventListener("keydown", (e) => {
+                console.log("Key down:", e.key, "Current anim:", currentAnim);
+                if (e.key === "a" || e.key === "A") {
+                    isMovingLeft = true;
+                    direction = -1;
+                    if (
+                        !isAttacking &&
+                        (currentAnim === "relax" || currentAnim === "run_end")
+                    ) {
+                        changeAnimation("run_start");
+                    }
+                } else if (e.key === "d" || e.key === "D") {
+                    isMovingRight = true;
+                    direction = 1;
+                    if (
+                        !isAttacking &&
+                        (currentAnim === "relax" || currentAnim === "run_end")
+                    ) {
+                        changeAnimation("run_start");
+                    }
+                } else if (e.key === "j" || e.key === "J") {
+                    if (!isAttacking) {
+                        isAttacking = true;
+                        changeAnimation("melee");
+                    }
+                }
+            });
+
+            document.addEventListener("keyup", (e) => {
+                console.log("Key up:", e.key, "Current anim:", currentAnim);
+                if (e.key === "a" || e.key === "A") {
+                    isMovingLeft = false;
+                    checkRunEndTransition();
+                } else if (e.key === "d" || e.key === "D") {
+                    isMovingRight = false;
+                    checkRunEndTransition();
+                }
+            });
+
+            function checkRunEndTransition() {
+                if (!isMovingLeft && !isMovingRight && !isAttacking) {
+                    if (
+                        currentAnim === "run_loop" ||
+                        currentAnim === "run_start"
+                    ) {
+                        changeAnimation("run_end");
+                    }
+                }
+            }
+
+            let lastFrameTime = 0;
+            const frameDelay = 35; // 50ms, animasyon hızlandı la
+            function optimizedGameLoop(timestamp) {
+                if (timestamp - lastFrameTime >= frameDelay) {
+                    lastFrameTime = timestamp;
+                    drawFrame();
+                    updatePosition();
+                    nextFrame();
+                }
+                requestAnimationFrame(optimizedGameLoop);
+            }
+
+            preloadImages();
+            requestAnimationFrame(optimizedGameLoop);
+        </script>
+    </body>
 </html>
