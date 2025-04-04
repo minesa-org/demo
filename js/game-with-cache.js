@@ -139,6 +139,7 @@ function initAudio() {
 
     // Set up audio properties
     footstepsSound.volume = 0.7;
+    footstepsSound.playbackRate = 1.2; // Make footsteps sound 1.5x faster
     backgroundMusic.volume = 0.5; // Set background music volume
 
     // Play background music
@@ -158,6 +159,7 @@ function initAudio() {
     const footstepsSound2 = document.createElement("audio");
     footstepsSound2.src = footstepsSound.src;
     footstepsSound2.volume = footstepsSound.volume;
+    footstepsSound2.playbackRate = 1.5; // Make footsteps sound 1.5x faster (same as first one)
     footstepsSound2.load();
 
     // Set up variable for dual-audio seamless looping
