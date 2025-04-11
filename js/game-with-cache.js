@@ -188,79 +188,26 @@ function initAudio() {
 
     // Set up audio properties
     footstepsSound.volume = 0.7;
-    footstepsSound.playbackRate = 1.2; // Make footsteps sound 1.5x faster
+    footstepsSound.playbackRate = 1.2; // Make footsteps sound 1.2x faster
     backgroundMusic.volume = 0.5; // Set background music volume
 
     // Play background music
     playBackgroundMusic();
 
-    // Instead of using the built-in loop property, we'll handle looping manually
-    // to avoid the gap between loops
-    footstepsSound.loop = false;
-
-    // Store the duration for manual looping
-    footstepsSound.addEventListener("loadedmetadata", function () {
-        footstepsSoundDuration = footstepsSound.duration * 1000; // Convert to milliseconds
-        // Footsteps sound duration stored for internal use
-    });
-
-    // Create a second footsteps sound element for seamless looping
-    const footstepsSound2 = document.createElement("audio");
-    // Ensure the src path is normalized for cross-platform compatibility
-    footstepsSound2.src = normalizePath(footstepsSound.src);
-    footstepsSound2.volume = footstepsSound.volume;
-    footstepsSound2.playbackRate = 1.5; // Make footsteps sound 1.5x faster (same as first one)
-    footstepsSound2.load();
-
-    // Set up variable for dual-audio seamless looping
-    let activeFootstep = footstepsSound;
-
-    // Set up event listener to handle truly seamless looping with dual audio elements
-    footstepsSound.addEventListener("timeupdate", function () {
-        // When we're 200ms from the end (or 20% of total duration, whichever is smaller),
-        // start the next sound to create perfect overlap
-        const overlapTime = Math.min(0.2, footstepsSound.duration * 0.2);
-        if (
-            activeFootstep === footstepsSound &&
-            footstepsSound.currentTime >
-                footstepsSound.duration - overlapTime &&
-            !footstepsSound2.currentTime
-        ) {
-            // Start the second sound
-            footstepsSound2.currentTime = 0;
-            footstepsSound2.play();
-            // Switch active sound
-            activeFootstep = footstepsSound2;
-            // Next footstep is now the first one
-        }
-    });
-
-    // Same for the second sound
-    footstepsSound2.addEventListener("timeupdate", function () {
-        const overlapTime = Math.min(0.2, footstepsSound2.duration * 0.2);
-        if (
-            activeFootstep === footstepsSound2 &&
-            footstepsSound2.currentTime >
-                footstepsSound2.duration - overlapTime &&
-            !footstepsSound.currentTime
-        ) {
-            // Start the first sound
-            footstepsSound.currentTime = 0;
-            footstepsSound.play();
-            // Switch active sound
-            activeFootstep = footstepsSound;
-            // Next footstep is now the second one
-        }
-    });
-
-    // Function to reset both footstep sounds
+    // Simple function to reset footstep sounds
     window.resetFootstepSounds = function () {
+        // Stop the original sound
         footstepsSound.pause();
-        footstepsSound2.pause();
         footstepsSound.currentTime = 0;
-        footstepsSound2.currentTime = 0.5;
-        activeFootstep = footstepsSound;
-        // Reset to first footstep as active
+
+        // Clear any interval
+        if (footstepsInterval) {
+            clearInterval(footstepsInterval);
+            footstepsInterval = null;
+        }
+
+        // Update the flag
+        isFootstepsPlaying = false;
     };
 
     meleeSound1.volume = 0.4;
@@ -381,24 +328,72 @@ function playJumpSound() {
     };
 }
 
-// Play or stop footsteps sound
+// Simple footsteps sound handling
+let footstepsInterval = null;
+
+// Play or stop footsteps sound with a simple, cross-browser compatible approach
 function updateFootstepsSound() {
     // Play footsteps when moving
     if ((isMovingLeft || isMovingRight) && !isJumping && !isFalling) {
         if (!isFootstepsPlaying) {
-            // Start with the first footstep sound
-            footstepsSound.currentTime = 0;
-            footstepsSound.play();
+            // Start playing the footsteps sound
             isFootstepsPlaying = true;
+
+            // Play the sound immediately
+            playFootstepSound();
+
+            // Set up interval for regular footstep sounds
+            // 300ms is a good rhythm for footsteps - adjust as needed
+            footstepsInterval = setInterval(playFootstepSound, 300);
+
+            console.log("Started footsteps sound (simple)");
         }
     } else {
         // Stop footsteps when not moving
         if (isFootstepsPlaying) {
-            // Use our global reset function to stop both sounds
-            window.resetFootstepSounds();
+            // Update the flag
             isFootstepsPlaying = false;
+
+            // Clear the interval
+            if (footstepsInterval) {
+                clearInterval(footstepsInterval);
+                footstepsInterval = null;
+            }
+
+            console.log("Stopped footsteps sound (simple)");
         }
     }
+}
+
+// Play a single footstep sound
+function playFootstepSound() {
+    // Only play if we're supposed to be playing footsteps
+    if (!isFootstepsPlaying) return;
+
+    // Clone the sound for a clean playback every time
+    const soundClone = footstepsSound.cloneNode();
+    soundClone.volume = footstepsSound.volume;
+
+    // Play the sound
+    const playPromise = soundClone.play();
+    if (playPromise !== undefined) {
+        playPromise.catch((error) => {
+            console.log("Error playing footstep:", error);
+        });
+    }
+
+    // Clean up the clone after it finishes playing to prevent memory leaks
+    soundClone.onended = function () {
+        // Remove the element from the DOM
+        try {
+            soundClone.remove();
+        } catch (e) {
+            // Some browsers don't support remove(), so use this fallback
+            if (soundClone.parentNode) {
+                soundClone.parentNode.removeChild(soundClone);
+            }
+        }
+    };
 }
 
 // Setup event listeners for keyboard and mouse input
