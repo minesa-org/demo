@@ -187,14 +187,15 @@ function initAudio() {
     backgroundMusic = document.getElementById("backgroundMusic");
 
     // Set up audio properties
-    footstepsSound.volume = 0.7;
-    footstepsSound.playbackRate = 1.2; // Make footsteps sound 1.2x faster
+    footstepsSound.volume = 1;
+    footstepsSound.playbackRate = 1; // Make footsteps sound 1.2x faster
+
     backgroundMusic.volume = 0.5; // Set background music volume
 
     // Play background music
     playBackgroundMusic();
 
-    // Simple function to reset footstep sounds
+    // Improved function to reset footstep sounds
     window.resetFootstepSounds = function () {
         // Stop the original sound
         footstepsSound.pause();
@@ -206,19 +207,33 @@ function initAudio() {
             footstepsInterval = null;
         }
 
+        // Stop and clean up all playing footstep sounds
+        footstepsSoundInstances.forEach((sound) => {
+            sound.pause();
+            try {
+                sound.remove();
+            } catch (e) {
+                // Some browsers don't support remove(), so use this fallback
+                if (sound.parentNode) {
+                    sound.parentNode.removeChild(sound);
+                }
+            }
+        });
+        footstepsSoundInstances = [];
+
         // Update the flag
         isFootstepsPlaying = false;
     };
 
-    meleeSound1.volume = 0.4;
-    meleeSound2.volume = 0.4;
-    meleeSound3.volume = 0.4;
+    meleeSound1.volume = 1;
+    meleeSound2.volume = 1;
+    meleeSound3.volume = 1;
 
-    skill1Sound.volume = 0.3;
-    skill1VoxSound.volume = 0.3;
+    skill1Sound.volume = 1;
+    skill1VoxSound.volume = 1;
 
-    throwSound.volume = 0.5;
-    jumpSound.volume = 0.6;
+    throwSound.volume = 1;
+    jumpSound.volume = 1;
 
     // Attempt to preload sounds for immediate playback
     preloadSounds();
@@ -257,6 +272,8 @@ function preloadSounds() {
                 sound.volume = originalVolume;
             });
     });
+
+    // The looping footsteps sound is already initialized in initAudio()
 }
 
 // Play a random melee attack sound
@@ -328,10 +345,13 @@ function playJumpSound() {
     };
 }
 
-// Simple footsteps sound handling
+// Improved footsteps sound handling with perfect looping
 let footstepsInterval = null;
+let footstepsSoundInstances = [];
+let lastFootstepTime = 0;
+const OVERLAP_TIME = 1900; // Overlap time in ms - adjusted for perfect loop with 1.99s audio
 
-// Play or stop footsteps sound with a simple, cross-browser compatible approach
+// Play or stop footsteps sound with perfect overlap
 function updateFootstepsSound() {
     // Play footsteps when moving
     if ((isMovingLeft || isMovingRight) && !isJumping && !isFalling) {
@@ -339,14 +359,18 @@ function updateFootstepsSound() {
             // Start playing the footsteps sound
             isFootstepsPlaying = true;
 
-            // Play the sound immediately
+            // Play the first footstep sound immediately
             playFootstepSound();
+            lastFootstepTime = Date.now();
 
-            // Set up interval for regular footstep sounds
-            // 300ms is a good rhythm for footsteps - adjust as needed
-            footstepsInterval = setInterval(playFootstepSound, 300);
+            // Start the footstep interval
+            footstepsInterval = setInterval(() => {
+                // Play the next footstep sound with overlap
+                playFootstepSound();
+                lastFootstepTime = Date.now();
+            }, OVERLAP_TIME);
 
-            console.log("Started footsteps sound (simple)");
+            console.log("Started footsteps sound with overlap");
         }
     } else {
         // Stop footsteps when not moving
@@ -360,19 +384,36 @@ function updateFootstepsSound() {
                 footstepsInterval = null;
             }
 
-            console.log("Stopped footsteps sound (simple)");
+            // Stop and clean up all playing footstep sounds
+            footstepsSoundInstances.forEach((sound) => {
+                sound.pause();
+                try {
+                    sound.remove();
+                } catch (e) {
+                    if (sound.parentNode) {
+                        sound.parentNode.removeChild(sound);
+                    }
+                }
+            });
+            footstepsSoundInstances = [];
+
+            console.log("Stopped footsteps sound");
         }
     }
 }
 
-// Play a single footstep sound
+// Play a single footstep sound with precise timing
 function playFootstepSound() {
     // Only play if we're supposed to be playing footsteps
     if (!isFootstepsPlaying) return;
 
-    // Clone the sound for a clean playback every time
+    // Create a new audio element for this footstep
     const soundClone = footstepsSound.cloneNode();
     soundClone.volume = footstepsSound.volume;
+    soundClone.playbackRate = footstepsSound.playbackRate;
+
+    // Add to our instances array for cleanup
+    footstepsSoundInstances.push(soundClone);
 
     // Play the sound
     const playPromise = soundClone.play();
@@ -384,6 +425,12 @@ function playFootstepSound() {
 
     // Clean up the clone after it finishes playing to prevent memory leaks
     soundClone.onended = function () {
+        // Remove from our instances array
+        const index = footstepsSoundInstances.indexOf(soundClone);
+        if (index > -1) {
+            footstepsSoundInstances.splice(index, 1);
+        }
+
         // Remove the element from the DOM
         try {
             soundClone.remove();
