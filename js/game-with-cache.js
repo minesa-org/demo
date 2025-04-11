@@ -3,6 +3,10 @@
  *
  * This file contains the main game logic and uses the AnimationCacheManager
  * to handle efficient loading and caching of animations.
+ *
+ * Cross-platform compatibility:
+ * - Path normalization for Windows/Mac/Linux compatibility
+ * - Consistent path separators across operating systems
  */
 
 // Get canvas and context
@@ -73,7 +77,18 @@ let footstepsSoundDuration = 0; // Will store the duration of the footsteps soun
 function initGame(cachedAnimations, cachedImages) {
     // Store the cached animations and images
     animations = cachedAnimations;
-    loadedImages = cachedImages;
+
+    // Normalize all image paths in the cached images for cross-platform compatibility
+    // This ensures images can be accessed regardless of OS path separators
+    loadedImages = {};
+    for (const key in cachedImages) {
+        const normalizedKey = normalizePath(key);
+        loadedImages[normalizedKey] = cachedImages[key];
+        // Also keep the original key for backward compatibility
+        if (normalizedKey !== key) {
+            loadedImages[key] = cachedImages[key];
+        }
+    }
 
     // Setup event listeners
     setupEventListeners();
@@ -90,13 +105,21 @@ function initGame(cachedAnimations, cachedImages) {
     // Start game loop
     requestAnimationFrame(optimizedGameLoop);
 
-    console.log("Game initialized with cached animations!");
+    console.log(
+        "Game initialized with cached animations and cross-platform path support!"
+    );
+}
+
+// Normalize path for cross-platform compatibility
+function normalizePath(path) {
+    // Replace all backslashes with forward slashes for consistency across platforms
+    return path.replace(/\\/g, "/");
 }
 
 // Load background image
 function loadBackgroundImage() {
     backgroundImage = new Image();
-    backgroundImage.src = "assets/others/background.png";
+    backgroundImage.src = normalizePath("assets/others/background.png");
     backgroundImage.onload = function () {
         console.log("Background image loaded");
     };
@@ -157,7 +180,8 @@ function initAudio() {
 
     // Create a second footsteps sound element for seamless looping
     const footstepsSound2 = document.createElement("audio");
-    footstepsSound2.src = footstepsSound.src;
+    // Ensure the src path is normalized for cross-platform compatibility
+    footstepsSound2.src = normalizePath(footstepsSound.src);
     footstepsSound2.volume = footstepsSound.volume;
     footstepsSound2.playbackRate = 1.5; // Make footsteps sound 1.5x faster (same as first one)
     footstepsSound2.load();
@@ -796,7 +820,9 @@ function drawFrame() {
         return;
     }
 
-    const img = loadedImages[frameUrl];
+    // Normalize the frame URL path for cross-platform compatibility
+    const normalizedFrameUrl = normalizePath(frameUrl);
+    const img = loadedImages[normalizedFrameUrl] || loadedImages[frameUrl];
     if (!img) {
         console.error("Image not found in cache:", frameUrl);
         return;
@@ -1098,7 +1124,9 @@ function updateProjectiles() {
 function renderProjectiles(ctx) {
     activeProjectiles.forEach((projectile) => {
         const frameUrl = animations.throwing_blade_01.frames[projectile.frame];
-        const img = loadedImages[frameUrl];
+        // Normalize the frame URL path for cross-platform compatibility
+        const normalizedFrameUrl = normalizePath(frameUrl);
+        const img = loadedImages[normalizedFrameUrl] || loadedImages[frameUrl];
 
         if (img) {
             ctx.save();
@@ -1126,7 +1154,8 @@ document.addEventListener("DOMContentLoaded", () => {
     AnimationCache.initCache(
         (progress, file) => {
             // Update loading progress UI
-            AnimationCache.updateProgress(progress, file);
+            // Normalize file path for display
+            AnimationCache.updateProgress(progress, normalizePath(file));
         },
         (animations, loadedImages) => {
             // All animations loaded, start the game
