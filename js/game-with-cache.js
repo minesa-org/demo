@@ -89,6 +89,12 @@ let jumpSound;
 let isFootstepsPlaying = false;
 let footstepsSoundDuration = 0; // Will store the duration of the footsteps sound
 
+// Empty function as a placeholder to avoid errors
+// Defined at the top level to ensure it's available in all contexts
+window.displayControlsInfo = function () {
+    // Controls info display removed
+};
+
 // Game initialization function
 function initGame(cachedAnimations, cachedImages) {
     // Store the cached animations and images
@@ -166,11 +172,6 @@ function toggleMusicMute() {
             window.updateMusicIndicator();
         }
     }
-}
-
-// Empty function as a placeholder to avoid errors
-function displayControlsInfo() {
-    // Controls info display removed
 }
 
 // Initialize audio elements
