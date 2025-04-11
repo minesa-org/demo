@@ -121,6 +121,9 @@ function initGame(cachedAnimations, cachedImages) {
     // Initialize audio elements
     initAudio();
 
+    // Setup music button
+    setupMusicButton();
+
     // Display controls info
     displayControlsInfo();
 
@@ -156,7 +159,32 @@ function playBackgroundMusic() {
     if (backgroundMusic) {
         backgroundMusic.play().catch((error) => {
             console.log("Background music couldn't autoplay: ", error);
-            // We'll add a UI element to let the user start the music manually
+            // This is expected due to browser autoplay policies
+            // The user will need to click the music button to start the music
+        });
+    }
+}
+
+// Function to set up the music button
+function setupMusicButton() {
+    const musicButton = document.getElementById("musicButton");
+    if (musicButton) {
+        musicButton.addEventListener("click", function () {
+            if (backgroundMusic) {
+                if (backgroundMusic.paused) {
+                    // Start playing the music
+                    backgroundMusic.play();
+                    musicButton.textContent = "🔊 Mute Music";
+                    musicButton.classList.remove("muted");
+                    isMusicMuted = false;
+                } else {
+                    // Pause the music
+                    backgroundMusic.pause();
+                    musicButton.textContent = "🔇 Play Music";
+                    musicButton.classList.add("muted");
+                    isMusicMuted = true;
+                }
+            }
         });
     }
 }
@@ -165,9 +193,27 @@ function playBackgroundMusic() {
 function toggleMusicMute() {
     if (backgroundMusic) {
         isMusicMuted = !isMusicMuted;
-        backgroundMusic.muted = isMusicMuted;
 
-        // Update the music indicator if it exists
+        // Update the music button
+        const musicButton = document.getElementById("musicButton");
+        if (musicButton) {
+            if (isMusicMuted) {
+                backgroundMusic.pause();
+                musicButton.textContent = "🔇 Play Music";
+                musicButton.classList.add("muted");
+            } else {
+                backgroundMusic.play().catch((error) => {
+                    console.log("Error playing music:", error);
+                });
+                musicButton.textContent = "🔊 Mute Music";
+                musicButton.classList.remove("muted");
+            }
+        } else {
+            // If button doesn't exist, just toggle mute
+            backgroundMusic.muted = isMusicMuted;
+        }
+
+        // Update the music indicator if it exists (legacy support)
         if (window.updateMusicIndicator) {
             window.updateMusicIndicator();
         }
