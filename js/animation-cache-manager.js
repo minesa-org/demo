@@ -30,13 +30,6 @@ class AnimationCacheManager {
                 ),
                 loop: true,
             },
-            relaxed: {
-                frames: Array.from(
-                    { length: 127 - 73 + 1 },
-                    (_, i) => `assets/rogue/relaxed/${73 + i}.svg`
-                ),
-                loop: true,
-            },
             walk_start: {
                 frames: Array.from(
                     { length: 526 - 515 + 1 },
