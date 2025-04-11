@@ -258,6 +258,9 @@ class AnimationCacheManager {
                 }
                 this.loadedCount++;
 
+                // Update global counter for debug panel
+                window.loadedImagesCount = this.loadedCount;
+
                 if (this.onProgressCallback) {
                     const progress =
                         (this.loadedCount / this.totalImages) * 100;
@@ -271,6 +274,13 @@ class AnimationCacheManager {
                 console.error(
                     `Failed to load: ${normalizedUrl} (original: ${url})`
                 );
+                // Log more details about the error
+                console.log("Image load error details:", {
+                    normalizedUrl,
+                    originalUrl: url,
+                    loadedCount: this.loadedCount,
+                    totalImages: this.totalImages,
+                });
                 this.loadedCount++;
                 reject(url);
             };
@@ -448,6 +458,9 @@ class AnimationCacheManager {
 
 // Export a singleton instance
 const AnimationCache = new AnimationCacheManager();
+
+// Make it available globally for debugging
+window.AnimationCache = AnimationCache;
 
 // Example of how to use in your game:
 // AnimationCache.initCache(

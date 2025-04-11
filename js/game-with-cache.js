@@ -11,7 +11,23 @@
 
 // Get canvas and context
 const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+if (!canvas) {
+    console.error(
+        "Canvas element not found! Check if the ID 'gameCanvas' exists in the HTML."
+    );
+}
+const ctx = canvas ? canvas.getContext("2d") : null;
+if (!ctx) {
+    console.error("Could not get 2D context from canvas!");
+}
+
+// Log canvas dimensions for debugging
+if (canvas) {
+    console.log("Canvas dimensions:", {
+        width: canvas.width,
+        height: canvas.height,
+    });
+}
 
 // Game state variables
 let currentAnim = "ready";
@@ -123,6 +139,10 @@ function loadBackgroundImage() {
     backgroundImage.onload = function () {
         console.log("Background image loaded");
     };
+    backgroundImage.onerror = function (e) {
+        console.error("Error loading background image:", e);
+        console.log("Attempted to load from path:", backgroundImage.src);
+    };
 }
 
 // Function to play background music
@@ -146,6 +166,11 @@ function toggleMusicMute() {
             window.updateMusicIndicator();
         }
     }
+}
+
+// Empty function as a placeholder to avoid errors
+function displayControlsInfo() {
+    // Controls info display removed
 }
 
 // Initialize audio elements
@@ -242,7 +267,7 @@ function initAudio() {
     meleeSound3.volume = 0.4;
 
     skill1Sound.volume = 0.3;
-    skill1VoxSound.volume = 0.7;
+    skill1VoxSound.volume = 0.3;
 
     throwSound.volume = 0.5;
     jumpSound.volume = 0.6;
@@ -398,32 +423,20 @@ function handleKeyDown(e) {
             isMovingLeft = true;
             direction = 1; // Left-facing
             if (!isAttacking && !isUsingSkill) {
-                if (isWalking) {
-                    if (
-                        currentAnim === "ready" ||
-                        currentAnim === "relaxed" ||
-                        currentAnim === "run_loop" ||
-                        currentAnim === "run_end"
-                    ) {
-                        changeAnimation("walk_start");
-                    }
-                } else {
-                    // Default is running
-                    if (currentAnim === "run_loop") {
-                        // Already running, don't restart animation
-                        // Do nothing to keep the current animation
-                    } else if (
-                        currentAnim === "ready" ||
-                        currentAnim === "relaxed" ||
-                        currentAnim === "walk_loop" ||
-                        currentAnim === "walk_end"
-                    ) {
-                        changeAnimation("run_start");
-                    } else if (currentAnim === "run_end") {
-                        // If we're ending a run and the player presses a movement key again,
-                        // go directly to run_loop to avoid restarting the animation
-                        changeAnimation("run_loop");
-                    }
+                // Walk animation removed, only run animation remains
+                if (currentAnim === "run_loop") {
+                    // Already running, don't restart animation
+                    // Do nothing to keep the current animation
+                } else if (
+                    currentAnim === "ready" ||
+                    currentAnim === "relaxed" ||
+                    currentAnim === "run_end"
+                ) {
+                    changeAnimation("run_start");
+                } else if (currentAnim === "run_end") {
+                    // If we're ending a run and the player presses a movement key again,
+                    // go directly to run_loop to avoid restarting the animation
+                    changeAnimation("run_loop");
                 }
             }
             break;
@@ -432,51 +445,30 @@ function handleKeyDown(e) {
             isMovingRight = true;
             direction = -1; // Right-facing
             if (!isAttacking && !isUsingSkill) {
-                if (isWalking) {
-                    if (
-                        currentAnim === "ready" ||
-                        currentAnim === "relaxed" ||
-                        currentAnim === "run_loop" ||
-                        currentAnim === "run_end"
-                    ) {
-                        changeAnimation("walk_start");
-                    }
-                } else {
-                    // Default is running
-                    if (currentAnim === "run_loop") {
-                        // Already running, don't restart animation
-                        // Do nothing to keep the current animation
-                    } else if (
-                        currentAnim === "ready" ||
-                        currentAnim === "relaxed" ||
-                        currentAnim === "walk_loop" ||
-                        currentAnim === "walk_end"
-                    ) {
-                        changeAnimation("run_start");
-                    } else if (currentAnim === "run_end") {
-                        // If we're ending a run and the player presses a movement key again,
-                        // go directly to run_loop to avoid restarting the animation
-                        changeAnimation("run_loop");
-                    }
+                // Walk animation removed, only run animation remains
+                if (currentAnim === "run_loop") {
+                    // Already running, don't restart animation
+                    // Do nothing to keep the current animation
+                } else if (
+                    currentAnim === "ready" ||
+                    currentAnim === "relaxed" ||
+                    currentAnim === "run_end"
+                ) {
+                    changeAnimation("run_start");
+                } else if (currentAnim === "run_end") {
+                    // If we're ending a run and the player presses a movement key again,
+                    // go directly to run_loop to avoid restarting the animation
+                    changeAnimation("run_loop");
                 }
             }
             break;
 
+        // Walk animation removed
         case "control":
         case "ctrl":
         case "controlleft":
         case "controlright":
-            isWalking = true;
-            isRunning = false;
-            if (
-                !isAttacking &&
-                !isUsingSkill &&
-                (isMovingLeft || isMovingRight)
-            ) {
-                if (currentAnim === "run_loop" || currentAnim === "run_start") {
-                    changeAnimation("walk_start");
-                }
-            }
+            // No longer changes to walk animation
             break;
 
         // Removed J key for melee attack, now using mouse click
@@ -510,24 +502,12 @@ function handleKeyUp(e) {
             checkMovementTransition();
             break;
 
+        // Walk animation removed
         case "control":
         case "ctrl":
         case "controlleft":
         case "controlright":
-            isWalking = false;
-            isRunning = true;
-            if (
-                !isAttacking &&
-                !isUsingSkill &&
-                (isMovingLeft || isMovingRight)
-            ) {
-                if (
-                    currentAnim === "walk_loop" ||
-                    currentAnim === "walk_start"
-                ) {
-                    changeAnimation("run_start");
-                }
-            }
+            // No longer changes from walk to run animation
             break;
 
         case "m":
@@ -540,9 +520,8 @@ function handleKeyUp(e) {
 // Check and handle movement transitions
 function checkMovementTransition() {
     if (!isMovingLeft && !isMovingRight && !isAttacking && !isUsingSkill) {
-        if (currentAnim === "walk_loop" || currentAnim === "walk_start") {
-            changeAnimation("walk_end");
-        } else if (currentAnim === "run_loop" || currentAnim === "run_start") {
+        // Walk animation references removed
+        if (currentAnim === "run_loop" || currentAnim === "run_start") {
             changeAnimation("run_end");
         }
     }
@@ -626,15 +605,8 @@ function nextFrame() {
             frame = animation.frames.length - 1;
 
             // Handle animation transitions based on current state
-            if (currentAnim === "walk_start") {
-                if (isMovingLeft || isMovingRight) {
-                    changeAnimation("walk_loop");
-                } else {
-                    changeAnimation("walk_end");
-                }
-            } else if (currentAnim === "walk_end") {
-                changeAnimation("ready");
-            } else if (currentAnim === "run_start") {
+            // Walk animation references removed
+            if (currentAnim === "run_start") {
                 if (!isWalking && (isMovingLeft || isMovingRight)) {
                     changeAnimation("run_loop");
                 } else {
@@ -642,11 +614,8 @@ function nextFrame() {
                 }
             } else if (currentAnim === "run_end") {
                 if (isMovingLeft || isMovingRight) {
-                    if (isWalking) {
-                        changeAnimation("walk_loop");
-                    } else {
-                        changeAnimation("run_loop");
-                    }
+                    // Walk animation references removed
+                    changeAnimation("run_loop");
                 } else {
                     changeAnimation("ready");
                 }
@@ -690,12 +659,8 @@ function nextFrame() {
                     // If we're falling, return to fall animation
                     changeAnimation("fall_loop");
                 } else if (isMovingLeft || isMovingRight) {
-                    // If we're moving, return to appropriate movement animation
-                    if (isWalking) {
-                        changeAnimation("walk_loop");
-                    } else {
-                        changeAnimation("run_loop");
-                    }
+                    // If we're moving, return to run animation (walk removed)
+                    changeAnimation("run_loop");
                 } else {
                     // Otherwise, return to ready stance
                     changeAnimation("ready");
@@ -712,12 +677,8 @@ function nextFrame() {
                     // If we're throwing, don't change the animation
                     // The throw animation will handle the transition
                 } else if (isMovingLeft || isMovingRight) {
-                    // If we're moving, return to appropriate movement animation
-                    if (isWalking) {
-                        changeAnimation("walk_loop");
-                    } else {
-                        changeAnimation("run_loop");
-                    }
+                    // If we're moving, return to run animation (walk removed)
+                    changeAnimation("run_loop");
                 } else {
                     // Otherwise, return to ready stance
                     changeAnimation("ready");
@@ -741,12 +702,8 @@ function nextFrame() {
                     // If we're falling, return to fall animation
                     changeAnimation("fall_loop");
                 } else if (isMovingLeft || isMovingRight) {
-                    // If we're moving, return to appropriate movement animation
-                    if (isWalking) {
-                        changeAnimation("walk_loop");
-                    } else {
-                        changeAnimation("run_loop");
-                    }
+                    // If we're moving, return to run animation (walk removed)
+                    changeAnimation("run_loop");
                 } else {
                     // Otherwise, return to ready stance
                     changeAnimation("ready");
@@ -809,6 +766,11 @@ function updatePosition() {
 
 // Draw the current frame
 function drawFrame() {
+    if (!ctx) {
+        console.error("Cannot draw frame: context is null");
+        return;
+    }
+
     if (!animations[currentAnim]) {
         console.error("Invalid animation:", currentAnim);
         return;
@@ -825,6 +787,11 @@ function drawFrame() {
     const img = loadedImages[normalizedFrameUrl] || loadedImages[frameUrl];
     if (!img) {
         console.error("Image not found in cache:", frameUrl);
+        console.log("Normalized URL:", normalizedFrameUrl);
+        console.log(
+            "Available images in cache:",
+            Object.keys(loadedImages).length
+        );
         return;
     }
 
@@ -1148,14 +1115,67 @@ function renderProjectiles(ctx) {
     });
 }
 
+// Draw a fallback message on the canvas if loading fails
+function drawFallbackMessage() {
+    if (!ctx) return;
+
+    // Clear canvas with a gradient background
+    const gradient = ctx.createLinearGradient(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+    gradient.addColorStop(0, "#333");
+    gradient.addColorStop(1, "#111");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw a message
+    ctx.fillStyle = "#fff";
+    ctx.font = "24px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(
+        "Loading game assets...",
+        canvas.width / 2,
+        canvas.height / 2 - 50
+    );
+    ctx.fillText(
+        "If this message persists, check console for errors",
+        canvas.width / 2,
+        canvas.height / 2
+    );
+
+    // Draw a border
+    ctx.strokeStyle = "#666";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+}
+
 // Start the game when animations are loaded
 document.addEventListener("DOMContentLoaded", () => {
+    // Draw initial fallback message
+    if (canvas && ctx) {
+        drawFallbackMessage();
+    }
+
     // Initialize Animation Cache with callbacks
     AnimationCache.initCache(
         (progress, file) => {
             // Update loading progress UI
             // Normalize file path for display
             AnimationCache.updateProgress(progress, normalizePath(file));
+
+            // Update fallback message with progress
+            if (canvas && ctx) {
+                drawFallbackMessage();
+                ctx.fillStyle = "#4CAF50";
+                ctx.fillText(
+                    `Loading: ${progress}%`,
+                    canvas.width / 2,
+                    canvas.height / 2 + 50
+                );
+            }
         },
         (animations, loadedImages) => {
             // All animations loaded, start the game

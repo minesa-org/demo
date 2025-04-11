@@ -10,7 +10,8 @@ body {
 }
 
 canvas {
-    background-color: black;
+    background-color: #333; /* Changed from black to dark gray for visibility */
     display: block;
-    border: 2px solid #444;
+    border: 2px solid #666; /* Brighter border for visibility */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* Add subtle glow */
 }
