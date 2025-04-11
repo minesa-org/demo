@@ -893,65 +893,6 @@ function optimizedGameLoop(timestamp) {
     requestAnimationFrame(optimizedGameLoop);
 }
 
-// Display controls info on screen
-function displayControlsInfo() {
-    // Create controls info div
-    const infoDiv = document.createElement("div");
-    infoDiv.style.position = "absolute";
-    infoDiv.style.bottom = "10px";
-    infoDiv.style.left = "10px";
-    infoDiv.style.backgroundColor = "rgba(0,0,0,0.7)";
-    infoDiv.style.color = "white";
-    infoDiv.style.padding = "10px";
-    infoDiv.style.fontFamily = "Arial, sans-serif";
-    infoDiv.style.fontSize = "14px";
-    infoDiv.style.borderRadius = "5px";
-
-    // Create music indicator
-    const musicIndicator = document.createElement("div");
-    musicIndicator.id = "musicIndicator";
-    musicIndicator.style.position = "absolute";
-    musicIndicator.style.top = "10px";
-    musicIndicator.style.right = "10px";
-    musicIndicator.style.backgroundColor = "rgba(0,0,0,0.7)";
-    musicIndicator.style.color = "white";
-    musicIndicator.style.padding = "10px";
-    musicIndicator.style.fontFamily = "Arial, sans-serif";
-    musicIndicator.style.fontSize = "14px";
-    musicIndicator.style.borderRadius = "5px";
-    musicIndicator.style.cursor = "pointer";
-    musicIndicator.innerHTML = "🔊 Music On";
-
-    // Add click event to toggle music
-    musicIndicator.addEventListener("click", function () {
-        toggleMusicMute();
-        // The toggleMusicMute function will call window.updateMusicIndicator
-    });
-
-    // Function to update music indicator text
-    window.updateMusicIndicator = function () {
-        if (isMusicMuted) {
-            musicIndicator.innerHTML = "🔇 Music Off";
-        } else {
-            musicIndicator.innerHTML = "🔊 Music On";
-        }
-    };
-
-    infoDiv.innerHTML = `
-      <strong>Controls:</strong><br>
-      A/D - Move left/right (run by default)<br>
-      Control - Hold to walk<br>
-      W - Jump<br>
-      Left Click - Attack (melee when close, throw when far)<br>
-      1 - Skill 1<br>
-      2 - Skill 2<br>
-      M - Toggle music mute
-  `;
-
-    document.body.appendChild(infoDiv);
-    document.body.appendChild(musicIndicator);
-}
-
 // Track mouse position
 function handleMouseMove(e) {
     // Get mouse position relative to canvas
