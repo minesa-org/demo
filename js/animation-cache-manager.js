@@ -3,6 +3,10 @@
  *
  * This file handles preloading and caching all game animations before gameplay starts.
  * Include this script before your main game code and call initCache() to start preloading.
+ *
+ * Cross-platform compatibility:
+ * - Path normalization for Windows/Mac/Linux compatibility
+ * - Consistent path separators across operating systems
  */
 
 class AnimationCacheManager {
@@ -13,6 +17,9 @@ class AnimationCacheManager {
         this.isLoading = false;
         this.onProgressCallback = null;
         this.onCompleteCallback = null;
+
+        // Path normalization for cross-platform compatibility
+        this.normalizedPaths = {};
 
         // Animation definitions
         this.animations = {
@@ -197,6 +204,17 @@ class AnimationCacheManager {
     }
 
     /**
+     * Normalize path for cross-platform compatibility
+     * @param {string} path - The file path to normalize
+     * @returns {string} - Normalized path with forward slashes
+     */
+    normalizePath(path) {
+        if (!path) return path;
+        // Replace all backslashes with forward slashes for consistency across platforms
+        return path.replace(/\\/g, "/");
+    }
+
+    /**
      * Count total images to load
      */
     countTotalImages() {
@@ -212,30 +230,47 @@ class AnimationCacheManager {
      */
     loadImage(url) {
         return new Promise((resolve, reject) => {
-            // Skip if already loaded
+            // Normalize the URL path for cross-platform compatibility
+            const normalizedUrl = this.normalizePath(url);
+
+            // Store the mapping between original and normalized URLs
+            this.normalizedPaths[url] = normalizedUrl;
+
+            // Skip if already loaded (check both original and normalized paths)
+            if (this.loadedImages[normalizedUrl]) {
+                resolve(this.loadedImages[normalizedUrl]);
+                return;
+            }
             if (this.loadedImages[url]) {
                 resolve(this.loadedImages[url]);
                 return;
             }
 
             const img = new Image();
-            img.src = url;
+            // Use normalized URL for loading
+            img.src = normalizedUrl;
 
             img.onload = () => {
-                this.loadedImages[url] = img;
+                // Store the image under both original and normalized URLs for compatibility
+                this.loadedImages[normalizedUrl] = img;
+                if (normalizedUrl !== url) {
+                    this.loadedImages[url] = img;
+                }
                 this.loadedCount++;
 
                 if (this.onProgressCallback) {
                     const progress =
                         (this.loadedCount / this.totalImages) * 100;
-                    this.onProgressCallback(progress.toFixed(2), url);
+                    this.onProgressCallback(progress.toFixed(2), normalizedUrl);
                 }
 
                 resolve(img);
             };
 
             img.onerror = () => {
-                console.error(`Failed to load: ${url}`);
+                console.error(
+                    `Failed to load: ${normalizedUrl} (original: ${url})`
+                );
                 this.loadedCount++;
                 reject(url);
             };
@@ -246,9 +281,18 @@ class AnimationCacheManager {
      * Get a cached image or load it if not cached
      */
     getImage(url) {
+        // Normalize the URL path for cross-platform compatibility
+        const normalizedUrl = this.normalizePath(url);
+
+        // Check if image is already loaded (check both original and normalized paths)
+        if (this.loadedImages[normalizedUrl]) {
+            return Promise.resolve(this.loadedImages[normalizedUrl]);
+        }
         if (this.loadedImages[url]) {
             return Promise.resolve(this.loadedImages[url]);
         }
+
+        // Load the image if not cached
         return this.loadImage(url);
     }
 
@@ -393,9 +437,12 @@ class AnimationCacheManager {
         const progressText = document.getElementById("progress-text");
         const currentFileText = document.getElementById("current-file");
 
+        // Ensure the displayed file path uses normalized format
+        const normalizedFile = this.normalizePath(currentFile);
+
         if (progressBar) progressBar.style.width = `${percentage}%`;
         if (progressText) progressText.innerText = `${percentage}%`;
-        if (currentFileText) currentFileText.innerText = currentFile;
+        if (currentFileText) currentFileText.innerText = normalizedFile;
     }
 }
 
@@ -406,10 +453,12 @@ const AnimationCache = new AnimationCacheManager();
 // AnimationCache.initCache(
 //   (progress, file) => {
 //     // Update progress UI
+//     // The file path will be automatically normalized for cross-platform compatibility
 //     AnimationCache.updateProgress(progress, file);
 //   },
 //   (animations, loadedImages) => {
 //     // All animations loaded, start game
+//     // loadedImages contains both original and normalized paths for cross-platform compatibility
 //     startGame(animations, loadedImages);
 //   }
 // );
