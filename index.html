@@ -5,7 +5,7 @@
         <meta
             name="viewport"
             content="width=device-width, initial-scale=1.0" />
-        <title>Rogue Game with Animation Caching</title>
+        <title>Dungeon Blitz: Remake (Demo)</title>
 
         <link
             rel="stylesheet"
@@ -20,11 +20,10 @@
             <button
                 id="musicButton"
                 class="music-button">
-                🔊 Play Music
+                Play Music
             </button>
         </div>
 
-        <!-- Audio elements (hidden) -->
         <audio
             id="footsteps"
             src="sounds/movement_footsteps_grass.wav"
@@ -62,10 +61,7 @@
             src="sounds/background_music.mp3"
             preload="auto"></audio>
 
-        <!-- Load the animation cache manager first -->
         <script src="js/animation-cache-manager.js"></script>
-
-        <!-- Load the main game file that uses the cache -->
         <script src="js/game-with-cache.js"></script>
     </body>
 </html>
