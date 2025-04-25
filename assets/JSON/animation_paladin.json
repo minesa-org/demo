@@ -1,0 +1,1354 @@
+{
+    "ready": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/32.svg",
+            "../Paladin/55.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "ready2": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/1.svg",
+            "../Paladin/24.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "heavy_ready": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/57.svg",
+            "../Paladin/80.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "relax": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/89.svg",
+            "../Paladin/135.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "afk": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/89.svg",
+            "../Paladin/135.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "run": {
+        "start": [
+            "../Paladin/186.svg",
+            "../Paladin/197.svg"
+        ],
+        "loop": [
+            "../Paladin/198.svg",
+            "../Paladin/213.svg"
+        ],
+        "end": [
+            "../Paladin/214.svg",
+            "../Paladin/230.svg"
+        ]
+    },
+    "heavy_walk": {
+        "start": [
+            "../Paladin/232.svg",
+            "../Paladin/233.svg"
+        ],
+        "loop": [
+            "../Paladin/234.svg",
+            "../Paladin/248.svg"
+        ],
+        "end": [
+            "../Paladin/249.svg",
+            "../Paladin/267.svg"
+        ]
+    },
+    "panic_run": {
+        "start": [
+            "../Paladin/270.svg",
+            "../Paladin/284.svg"
+        ],
+        "loop": [
+            "../Paladin/285.svg",
+            "../Paladin/296.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "jump": {
+        "start": [
+            "../Paladin/299.svg",
+            "../Paladin/305.svg"
+        ],
+        "loop": [
+            "../Paladin/306.svg",
+            "../Paladin/330.svg"
+        ],
+        "end": [
+            "../Paladin/331.svg",
+            "../Paladin/349.svg"
+        ]
+    },
+    "fall": {
+        "start": [
+            "../Paladin/351.svg",
+            "../Paladin/358.svg"
+        ],
+        "loop": [
+            "../Paladin/359.svg",
+            "../Paladin/383.svg"
+        ],
+        "end": [
+            "../Paladin/384.svg",
+            "../Paladin/402.svg"
+        ]
+    },
+    "drop": {
+        "start": [
+            "../Paladin/404.svg",
+            "../Paladin/411.svg"
+        ],
+        "loop": [
+            "../Paladin/412.svg",
+            "../Paladin/436.svg"
+        ],
+        "end": [
+            "../Paladin/437.svg",
+            "../Paladin/455.svg"
+        ]
+    },
+    "heavy_drop": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/458.svg",
+            "../Paladin/460.svg"
+        ],
+        "end": [
+            "../Paladin/461.svg",
+            "../Paladin/470.svg"
+        ]
+    },
+    "heavy_fall": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/471.svg",
+            "../Paladin/473.svg"
+        ],
+        "end": [
+            "../Paladin/474.svg",
+            "../Paladin/483.svg"
+        ]
+    },
+    "ready_dire": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/493.svg",
+            "../Paladin/558.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "run_dire": {
+        "start": [
+            "../Paladin/559.svg",
+            "../Paladin/561.svg"
+        ],
+        "loop": [
+            "../Paladin/562.svg",
+            "../Paladin/576.svg"
+        ],
+        "end": [
+            "../Paladin/577.svg",
+            "../Paladin/594.svg"
+        ]
+    },
+    "jump_dire": {
+        "start": [
+            "../Paladin/698.svg",
+            "../Paladin/703.svg"
+        ],
+        "loop": [
+            "../Paladin/704.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/705.svg",
+            "../Paladin/714.svg"
+        ]
+    },
+    "ready_horse": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/595.svg",
+            "../Paladin/655.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "run_horse": {
+        "start": [
+            "../Paladin/656.svg",
+            "../Paladin/658.svg"
+        ],
+        "loop": [
+            "../Paladin/659.svg",
+            "../Paladin/667.svg"
+        ],
+        "end": [
+            "../Paladin/668.svg",
+            "../Paladin/680.svg"
+        ]
+    },
+    "jump_horse": {
+        "start": [
+            "../Paladin/681.svg",
+            "../Paladin/690.svg"
+        ],
+        "loop": [
+            "../Paladin/691.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/692.svg",
+            "../Paladin/697.svg"
+        ]
+    },
+    "call_mount": {
+        "start": [
+            "../Paladin/715.svg",
+            "../Paladin/724.svg"
+        ],
+        "loop": [
+            "../Paladin/725.svg",
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "hit_react": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/727.svg",
+            "../Paladin/731.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "heavy_hit_react": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/733.svg",
+            "../Paladin/740.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "call_pet": {
+        "start": [
+            "../Paladin/742.svg",
+            "../Paladin/758.svg"
+        ],
+        "loop": [
+            "../Paladin/759.svg",
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "frozen": {
+        "start": [
+            "../Paladin/784.svg",
+            null
+        ],
+        "loop": [
+            "../Paladin/785.svg",
+            "../Paladin/763.svg"
+        ],
+        "end": [
+            "../Paladin/786.svg",
+            "../Paladin/788.svg"
+        ]
+    },
+    "stunned": {
+        "start": [
+            "../Paladin/791.svg",
+            null
+        ],
+        "loop": [
+            "../Paladin/792.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/793.svg",
+            "../Paladin/795.svg"
+        ]
+    },
+    "melee": {
+        "first": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Paladin/804.svg",
+                null
+            ],
+            "end": [
+                "../Paladin/805.svg",
+                "../Paladin/820.svg"
+            ]
+        },
+        "second": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Paladin/826.svg",
+                null
+            ],
+            "end": [
+                "../Paladin/827.svg",
+                "../Paladin/841.svg"
+            ]
+        },
+        "third": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Paladin/848.svg",
+                null
+            ],
+            "end": [
+                "../Paladin/849.svg",
+                "../Paladin/864.svg"
+            ]
+        }
+    },
+    "cleave": {
+        "start": [
+            "../Paladin/869.svg",
+            "../Paladin/876.svg"
+        ],
+        "loop": [
+            "../Paladin/877.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/878.svg",
+            "../Paladin/906.svg"
+        ]
+    },
+    "plant_banner": {
+        "start": [
+            "../Paladin/908.svg",
+            "../Paladin/925.svg"
+        ],
+        "loop": [
+            "../Paladin/926.svg",
+            "../Paladin/931.svg"
+        ],
+        "end": [
+            "../Paladin/932.svg",
+            "../Paladin/942.svg"
+        ]
+    },
+    "mace_slam": {
+        "start": [
+            "../Paladin/943.svg",
+            "../Paladin/953.svg"
+        ],
+        "loop": [
+            "../Paladin/954.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/955.svg",
+            "../Paladin/984.svg"
+        ]
+    },
+    "jump_slam": {
+        "start": [
+            "../Paladin/986.svg",
+            "../Paladin/1003.svg"
+        ],
+        "loop": [
+            "../Paladin/1004.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/1005.svg",
+            "../Paladin/1021.svg"
+        ]
+    },
+    "jump_attack": {
+        "start": [
+            "../Paladin/1023.svg",
+            "../Paladin/1030.svg"
+        ],
+        "loop": [
+            "../Paladin/1031.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/1032.svg",
+            "../Paladin/1061.svg"
+        ]
+    },
+    "shield_uber": {
+        "start": [
+            "../Paladin/1063.svg",
+            "../Paladin/1069.svg"
+        ],
+        "loop": [
+            "../Paladin/1070.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/1071.svg",
+            "../Paladin/1081.svg"
+        ]
+    },
+    "smite_3": {
+        "start": [
+            "../Paladin/1082.svg",
+            "../Paladin/1116.svg"
+        ],
+        "loop": [
+            "../Paladin/1117.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/1118.svg",
+            "../Paladin/1119.svg"
+        ]
+    },
+    "smite_1": {
+        "start": [
+            "../Paladin/1121.svg",
+            "../Paladin/1138.svg"
+        ],
+        "loop": [
+            "../Paladin/1117.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/1118.svg",
+            "../Paladin/1119.svg"
+        ]
+    },
+    "uber_melee": {
+        "start": [
+            "../Paladin/1143.svg",
+            "../Paladin/1148.svg"
+        ],
+        "loop": [
+            "../Paladin/1149.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/1150.svg",
+            "../Paladin/1189.svg"
+        ]
+    },
+    "cleaving_blows": {
+        "start": [
+            "../Paladin/1191.svg",
+            "../Paladin/1227.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "meteor_smash": {
+        "start": [
+            "../Paladin/1231.svg",
+            "../Paladin/1277.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "lob": {
+        "start": [
+            "../Paladin/1279.svg",
+            "../Paladin/1294.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "shoot": {
+        "default": {
+            "start": [
+                "../Paladin/1297.svg",
+                "../Paladin/1305.svg"
+            ],
+            "loop": [
+                null,
+                null
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "up_45": {
+            "start": [
+                "../Paladin/1308.svg",
+                "../Paladin/1316.svg"
+            ],
+            "loop": [
+                null,
+                null
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "up_90": {
+            "start": [
+                "../Paladin/1319.svg",
+                "../Paladin/1327.svg"
+            ],
+            "loop": [
+                null,
+                null
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "down_45": {
+            "start": [
+                "../Paladin/1330.svg",
+                "../Paladin/1338.svg"
+            ],
+            "loop": [
+                null,
+                null
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "down_90": {
+            "start": [
+                "../Paladin/1341.svg",
+                "../Paladin/1349.svg"
+            ],
+            "loop": [
+                null,
+                null
+            ],
+            "end": [
+                null,
+                null
+            ]
+        }
+    },
+    "shoot_heavy": {
+        "start": [
+            "../Paladin/1351.svg",
+            "../Paladin/1366.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "group_buff": {
+        "start": [
+            "../Paladin/1368.svg",
+            "../Paladin/1382.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "foot_stomp": {
+        "start": [
+            "../Paladin/1383.svg",
+            "../Paladin/1401.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "smite_2": {
+        "start": [
+            "../Paladin/1402.svg",
+            "../Paladin/1414.svg"
+        ],
+        "loop": [
+            "../Paladin/1415.svg",
+            "../Paladin/1432.svg"
+        ],
+        "end": [
+            "../Paladin/1433.svg",
+            "../Paladin/1437.svg"
+        ]
+    },
+    "hand_off": {
+        "start": [
+            "../Paladin/1439.svg",
+            "../Paladin/1456.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "shield_uber_2": {
+        "start": [
+            "../Paladin/1458.svg",
+            "../Paladin/1463.svg"
+        ],
+        "loop": [
+            "../Paladin/1464.svg",
+            "../Paladin/1467.svg"
+        ],
+        "end": [
+            "../Paladin/1468.svg",
+            "../Paladin/1476.svg"
+        ]
+    },
+    "shield_uber_3": {
+        "start": [
+            "../Paladin/1478.svg",
+            "../Paladin/1479.svg"
+        ],
+        "loop": [
+            "../Paladin/1480.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/1481.svg",
+            "../Paladin/1507.svg"
+        ]
+    },
+    "shield_flurry": {
+        "start": [
+            "../Paladin/1509.svg",
+            "../Paladin/1531.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "berserk_charge": {
+        "start": [
+            "../Paladin/1533.svg",
+            "../Paladin/1614.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "furious_assault": {
+        "start": [
+            "../Paladin/1616.svg",
+            "../Paladin/1642.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "heavy_melee": {
+        "first": {
+            "start": [
+                "../Paladin/1644.svg",
+                "../Paladin/1664.svg"
+            ],
+            "loop": [
+                null,
+                null
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "second": {
+            "start": [
+                "../Paladin/1666.svg",
+                "../Paladin/1687.svg"
+            ],
+            "loop": [
+                null,
+                null
+            ],
+            "end": [
+                null,
+                null
+            ]
+        }
+    },
+    "ram": {
+        "start": [
+            "../Paladin/1688.svg",
+            "../Paladin/1710.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "bull_rush": {
+        "open": {
+            "start": [
+                "../Paladin/1712.svg",
+                "../Paladin/1724.svg"
+            ],
+            "loop": [
+                null,
+                null
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "close": {
+            "start": [
+                "../Paladin/1726.svg",
+                "../Paladin/1761.svg"
+            ],
+            "loop": [
+                null,
+                null
+            ],
+            "end": [
+                null,
+                null
+            ]
+        }
+    },
+    "holy_smash": {
+        "start": [
+            "../Paladin/1763.svg",
+            "../Paladin/1828.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "heal": {
+        "start": [
+            "../Paladin/1829.svg",
+            "../Paladin/1841.svg"
+        ],
+        "loop": [
+            "../Paladin/1842.svg",
+            "../Paladin/1858.svg"
+        ],
+        "end": [
+            "../Paladin/1859.svg",
+            "../Paladin/1864.svg"
+        ]
+    },
+    "roar": {
+        "start": [
+            "../Paladin/2008.svg",
+            "../Paladin/2050.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "war_cry": {
+        "start": [
+            "../Paladin/2052.svg",
+            "../Paladin/2082.svg"
+        ],
+        "loop": [
+            "../Paladin/2083.svg",
+            "../Paladin/2088.svg"
+        ],
+        "end": [
+            "../Paladin/2089.svg",
+            "../Paladin/2091.svg"
+        ]
+    },
+    "cast_1": {
+        "start": [
+            "../Paladin/2093.svg",
+            "../Paladin/2123.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "cast_2": {
+        "start": [
+            "../Paladin/2124.svg",
+            "../Paladin/2167.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "cast_3": {
+        "start": [
+            "../Paladin/2168.svg",
+            "../Paladin/2207.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "cast_4": {
+        "start": [
+            "../Paladin/2209.svg",
+            "../Paladin/2264.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "koed": {
+        "start": [
+            "../Paladin/2266.svg",
+            "../Paladin/2272.svg"
+        ],
+        "loop": [
+            "../Paladin/2273.svg",
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "final_splat": {
+        "start": [
+            "../Paladin/2275.svg",
+            "../Paladin/2288.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "koed_2": {
+        "start": [
+            "../Paladin/2290.svg",
+            "../Paladin/2291.svg"
+        ],
+        "loop": [
+            "../Paladin/2292.svg",
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "final_splat_2": {
+        "start": [
+            "../Paladin/2294.svg",
+            "../Paladin/2302.svg"
+        ],
+        "loop": [
+            "../Paladin/2303.svg",
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "revive": {
+        "start": [
+            "../Paladin/2305.svg",
+            "../Paladin/2309.svg"
+        ],
+        "loop": [
+            "../Paladin/2310.svg",
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "appear": {
+        "start": [
+            "../Paladin/2313.svg",
+            "../Paladin/2331.svg"
+        ],
+        "loop": [
+            "../Paladin/89.svg",
+            "../Paladin/135.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "dance": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/2382.svg",
+            "../Paladin/2507.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "bolster": {
+        "start": [
+            "../Paladin/2510.svg",
+            "../Paladin/2517.svg"
+        ],
+        "loop": [
+            "../Paladin/2518.svg",
+            "../Paladin/2544.svg"
+        ],
+        "end": [
+            "../Paladin/2545.svg",
+            "../Paladin/2555.svg"
+        ]
+    },
+    "taunt": {
+        "start": [
+            "../Paladin/2557.svg",
+            "../Paladin/2564.svg"
+        ],
+        "loop": [
+            "../Paladin/2565.svg",
+            "../Paladin/2589.svg"
+        ],
+        "end": [
+            "../Paladin/2590.svg",
+            "../Paladin/2595.svg"
+        ]
+    },
+    "wave": {
+        "start": [
+            "../Paladin/2598.svg",
+            "../Paladin/2601.svg"
+        ],
+        "loop": [
+            "../Paladin/2602.svg",
+            "../Paladin/2627.svg"
+        ],
+        "end": [
+            "../Paladin/2628.svg",
+            "../Paladin/2633.svg"
+        ]
+    },
+    "cheer": {
+        "start": [
+            "../Paladin/2635.svg",
+            "../Paladin/2641.svg"
+        ],
+        "loop": [
+            "../Paladin/2642.svg",
+            "../Paladin/2656.svg"
+        ],
+        "end": [
+            "../Paladin/2657.svg",
+            "../Paladin/2662.svg"
+        ]
+    },
+    "fail": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/32.svg",
+            "../Paladin/55.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "angry": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/32.svg",
+            "../Paladin/55.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "halt": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/32.svg",
+            "../Paladin/55.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "flex": {
+        "start": [
+            "../Paladin/2738.svg",
+            "../Paladin/2746.svg"
+        ],
+        "loop": [
+            "../Paladin/2747.svg",
+            "../Paladin/2832.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "flex_2": {
+        "start": [
+            "../Paladin/2834.svg",
+            "../Paladin/2855.svg"
+        ],
+        "loop": [
+            "../Paladin/2856.svg",
+            "../Paladin/2858.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "sit": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/2861.svg",
+            "../Paladin/2902.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "throne_sit": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/2905.svg",
+            "../Paladin/2928.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "throne": {
+        "start": [
+            "../Paladin/2931.svg",
+            "../Paladin/3008.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "laugh": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/32.svg",
+            "../Paladin/55.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "charge": {
+        "start": [
+            "../Paladin/3036.svg",
+            "../Paladin/3043.svg"
+        ],
+        "loop": [
+            "../Paladin/3044.svg",
+            "../Paladin/3068.svg"
+        ],
+        "end": [
+            "../Paladin/3069.svg",
+            "../Paladin/3080.svg"
+        ]
+    },
+    "music": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/32.svg",
+            "../Paladin/55.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "sharpen": {
+        "start": [
+            "../Paladin/3109.svg",
+            "../Paladin/3141.svg"
+        ],
+        "loop": [
+            "../Paladin/3142.svg",
+            "../Paladin/3168.svg"
+        ],
+        "end": [
+            "../Paladin/3169.svg",
+            "../Paladin/3197.svg"
+        ]
+    },
+    "shrug": {
+        "start": [
+            "../Paladin/3199.svg",
+            "../Paladin/3218.svg"
+        ],
+        "loop": [
+            "../Paladin/3218.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/3220.svg",
+            "../Paladin/3239.svg"
+        ]
+    },
+    "yell": {
+        "start": [
+            "../Paladin/3242.svg",
+            "../Paladin/3317.svg"
+        ],
+        "loop": [
+            "../Paladin/3317.svg",
+            "../Paladin/3337.svg"
+        ],
+        "end": [
+            "../Paladin/3338.svg",
+            "../Paladin/3366.svg"
+        ]
+    },
+    "hero_pose": {
+        "start": [
+            "../Paladin/3368.svg",
+            "../Paladin/3381.svg"
+        ],
+        "loop": [
+            "../Paladin/3382.svg",
+            "../Paladin/3418.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "haughty_laugh": {
+        "start": [
+            "../Paladin/3420.svg",
+            "../Paladin/3477.svg"
+        ],
+        "loop": [
+            "../Paladin/3382.svg",
+            "../Paladin/3418.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "fold_arms": {
+        "start": [
+            "../Paladin/3517.svg",
+            "../Paladin/3525.svg"
+        ],
+        "loop": [
+            "../Paladin/3526.svg",
+            "../Paladin/3545.svg"
+        ],
+        "end": [
+            "../Paladin/3556.svg",
+            "../Paladin/3553.svg"
+        ]
+    }
+}

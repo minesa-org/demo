@@ -1,0 +1,1200 @@
+{
+	"metadata": {
+		"version": "1.0",
+		"author": "BlitzForge Studios",
+		"created": "2024-04-15",
+		"description": "Animations for Rogue"
+	},
+	"ready": {
+		"name": "Ready",
+		"start": [
+			null,
+			null
+		],
+		"loop": [
+			"../Rogue/1.svg",
+			"../Rogue/64.svg"
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"relaxed": {
+		"name": "Relaxed",
+		"start": [
+			null,
+			null
+		],
+		"loop": [
+			"../Rogue/73.svg",
+			"../Rogue/127.svg"
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"readydire": {
+		"name": "Ready Dire",
+		"start": [
+			null,
+			null
+		],
+		"loop": [
+			"../Rogue/129.svg",
+			"../Rogue/194.svg"
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"rundire": {
+		"name": "Run Dire",
+		"start": [
+			"../Rogue/196.svg",
+			"../Rogue/198.svg"
+		],
+		"loop": [
+			"../Rogue/199.svg",
+			"../Rogue/217.svg"
+		],
+		"end": [
+			"../Rogue/218.svg",
+			"../Rogue/231.svg"
+		]
+	},
+	"readyhorse": {
+		"name": "Ready Horse",
+		"start": [
+			null,
+			null
+		],
+		"loop": [
+			"../Rogue/232.svg",
+			"../Rogue/292.svg"
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"runhorse": {
+		"name": "Run Horse",
+		"start": [
+			"../Rogue/293.svg",
+			"../Rogue/295.svg"
+		],
+		"loop": [
+			"../Rogue/296.svg",
+			"../Rogue/310.svg"
+		],
+		"end": [
+			"../Rogue/311.svg",
+			"../Rogue/317.svg"
+		]
+	},
+	"jumphorse": {
+		"name": "Jump Horse",
+		"start": [
+			"../Rogue/318.svg",
+			"../Rogue/327.svg"
+		],
+		"loop": [
+			"../Rogue/328.svg",
+			null
+		],
+		"end": [
+			"../Rogue/329.svg",
+			"../Rogue/334.svg"
+		]
+	},
+	"jumpdire": {
+		"name": "Jump Dire",
+		"start": [
+			"../Rogue/335.svg",
+			"../Rogue/340.svg"
+		],
+		"loop": [
+			"../Rogue/341.svg",
+			null
+		],
+		"end": [
+			"../Rogue/342.svg",
+			"../Rogue/351.svg"
+		]
+	},
+	"afk": {
+		"name": "AFK",
+		"start": [
+			null,
+			null
+		],
+		"loop": [
+			"../Rogue/73.svg",
+			"../Rogue/127.svg"
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"appear": {
+		"name": "Appear",
+		"start": [
+			"../Rogue/408.svg",
+			"../Rogue/427.svg"
+		],
+		"loop": [
+			"../Rogue/73.svg",
+			"../Rogue/127.svg"
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"callmount": {
+		"name": "Call Mount",
+		"start": [
+			"../Rogue/484.svg",
+			"../Rogue/493.svg"
+		],
+		"loop": [
+			"../Rogue/494.svg",
+			null
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"callpet": {
+		"name": "Call Pet",
+		"start": [
+			"../Rogue/496.svg",
+			"../Rogue/512.svg"
+		],
+		"loop": [
+			"../Rogue/513.svg",
+			null
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"walk": {
+		"name": "Walk",
+		"start": [
+			"../Rogue/515.svg",
+			"../Rogue/526.svg"
+		],
+		"loop": [
+			"../Rogue/527.svg",
+			"../Rogue/550.svg"
+		],
+		"end": [
+			"../Rogue/551.svg",
+			"../Rogue/556.svg"
+		]
+	},
+	"run": {
+		"name": "Run",
+		"start": [
+			"../Rogue/559.svg",
+			"../Rogue/566.svg"
+		],
+		"loop": [
+			"../Rogue/567.svg",
+			"../Rogue/582.svg"
+		],
+		"end": [
+			"../Rogue/583.svg",
+			"../Rogue/595.svg"
+		]
+	},
+	"jump": {
+		"name": "Jump",
+		"start": [
+			"../Rogue/597.svg",
+			"../Rogue/604.svg"
+		],
+		"loop": [
+			"../Rogue/605.svg",
+			"../Rogue/628.svg"
+		],
+		"end": [
+			"../Rogue/629.svg",
+			"../Rogue/644.svg"
+		]
+	},
+	"fall": {
+		"name": "Fall",
+		"start": [
+			null,
+			null
+		],
+		"loop": [
+			"../Rogue/646.svg",
+			"../Rogue/669.svg"
+		],
+		"end": [
+			"../Rogue/670.svg",
+			"../Rogue/685.svg"
+		]
+	},
+	"drop": {
+		"name": "Drop",
+		"start": [
+			null,
+			null
+		],
+		"loop": [
+			"../Rogue/687.svg",
+			"../Rogue/710.svg"
+		],
+		"end": [
+			"../Rogue/711.svg",
+			"../Rogue/726.svg"
+		]
+	},
+	"backpedal": {
+		"name": "Backpedal",
+		"start": [
+			"../Rogue/727.svg",
+			"../Rogue/738.svg"
+		],
+		"loop": [
+			"../Rogue/739.svg",
+			null
+		],
+		"end": [
+			"../Rogue/740.svg",
+			null
+		]
+	},
+	"hitreact": {
+		"name": "Hitreact",
+		"start": [
+			"../Rogue/741.svg",
+			"../Rogue/751.svg"
+		],
+		"loop": [
+			"../Rogue/752.svg",
+			null
+		],
+		"end": [
+			"../Rogue/753.svg",
+			null
+		]
+	},
+	"koed_alt": {
+		"name": "KOed_alt",
+		"start": [
+			"../Rogue/754.svg",
+			"../Rogue/823.svg"
+		],
+		"loop": [
+			"../Rogue/824.svg",
+			null
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"koed": {
+		"name": "KOed",
+		"start": [
+			null,
+			null
+		],
+		"loop": [
+			"../Rogue/826.svg",
+			null
+		],
+		"end": [
+			"../Rogue/827.svg",
+			null
+		]
+	},
+	"finalsplat": {
+		"name": "Final Splat",
+		"start": [
+			"../Rogue/828.svg",
+			"../Rogue/845.svg"
+		],
+		"loop": [
+			"../Rogue/846.svg",
+			null
+		],
+		"end": [
+			"../Rogue/847.svg",
+			null
+		]
+	},
+	"revive": {
+		"name": "Revive",
+		"start": [
+			"../Rogue/848.svg",
+			"../Rogue/866.svg"
+		],
+		"loop": [
+			"../Rogue/867.svg",
+			null
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"frozen": {
+		"name": "Frozen",
+		"start": [
+			null,
+			null
+		],
+		"loop": [
+			"../Rogue/869.svg",
+			"../Rogue/873.svg"
+		],
+		"end": [
+			"../Rogue/874.svg",
+			null
+		]
+	},
+	"stunned": {
+		"name": "Stunned",
+		"start": [
+			null,
+			null
+		],
+		"loop": [
+			"../Rogue/875.svg",
+			"../Rogue/924.svg"
+		],
+		"end": [
+			"../Rogue/925.svg",
+			null
+		]
+	},
+	"sleep": {
+		"name": "Sleep",
+		"start": [
+			null,
+			null
+		],
+		"loop": [
+			"../Rogue/926.svg",
+			null
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"melee": {
+		"name": "melee",
+		"first": {
+			"start": [
+				null,
+				null
+			],
+			"loop": [
+				"../Rogue/933.svg",
+				null
+			],
+			"end": [
+				"../Rogue/934.svg",
+				"../Rogue/949.svg"
+			]
+		},
+		"second": {
+			"start": [
+				null,
+				null
+			],
+			"loop": [
+				"../Rogue/951.svg",
+				null
+			],
+			"end": [
+				"../Rogue/952.svg",
+				"../Rogue/967.svg"
+			]
+		},
+		"third": {
+			"start": [
+				null,
+				null
+			],
+			"loop": [
+				"../Rogue/968.svg",
+				null
+			],
+			"end": [
+				"../Rogue/969.svg",
+				"../Rogue/983.svg"
+			]
+		}
+	},
+	"shoot": {
+		"name": "Shoot",
+		"default": {
+			"start": [
+				null,
+				null
+			],
+			"loop": [
+				"../Rogue/986.svg",
+				null
+			],
+			"end": [
+				"../Rogue/987.svg",
+				"../Rogue/995.svg"
+			]
+		},
+		"up45": {
+			"start": [
+				null,
+				null
+			],
+			"loop": [
+				"../Rogue/1010.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1011.svg",
+				"../Rogue/1019.svg"
+			]
+		},
+		"up90": {
+			"start": [
+				null,
+				null
+			],
+			"loop": [
+				"../Rogue/1022.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1023.svg",
+				"../Rogue/1031.svg"
+			]
+		},
+		"down45": {
+			"start": [
+				null,
+				null
+			],
+			"loop": [
+				"../Rogue/1034.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1035.svg",
+				"../Rogue/1043.svg"
+			]
+		},
+		"down90": {
+			"start": [
+				null,
+				null
+			],
+			"loop": [
+				"../Rogue/1046.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1047.svg",
+				"../Rogue/1055.svg"
+			]
+		}
+	},
+	"skill": {
+		"name": "Skills",
+		"quickthrow": {
+			"start": [
+				"../Rogue/1057.svg",
+				"../Rogue/1066.svg"
+			],
+			"loop": [
+				"../Rogue/1067.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1068.svg",
+				"../Rogue/1083.svg"
+			]
+		},
+		"throw": {
+			"start": [
+				"../Rogue/1084.svg",
+				"../Rogue/1086.svg"
+			],
+			"loop": [
+				"../Rogue/1087.svg",
+				"../Rogue/1098.svg"
+			],
+			"end": [
+				"../Rogue/1099.svg",
+				"../Rogue/1114.svg"
+			]
+		},
+		"dodge": {
+			"start": [
+				"../Rogue/1115.svg",
+				"../Rogue/1118.svg"
+			],
+			"loop": [
+				"../Rogue/1119.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1120.svg",
+				"../Rogue/1135.svg"
+			]
+		},
+		"saberuber": {
+			"start": [
+				"../Rogue/1136.svg",
+				"../Rogue/1161.svg"
+			],
+			"loop": [
+				"../Rogue/1162.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1163.svg",
+				"../Rogue/1175.svg"
+			]
+		},
+		"maceuber": {
+			"start": [
+				"../Rogue/1176.svg",
+				"../Rogue/1191.svg"
+			],
+			"loop": [
+				"../Rogue/1192.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1193.svg",
+				"../Rogue/1205.svg"
+			]
+		},
+		"rapieruber": {
+			"start": [
+				"../Rogue/1206.svg",
+				"../Rogue/1227.svg"
+			],
+			"loop": [
+				"../Rogue/1228.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1229.svg",
+				"../Rogue/1236.svg"
+			]
+		},
+		"cyclone": {
+			"start": [
+				"../Rogue/1237.svg",
+				"../Rogue/1267.svg"
+			],
+			"loop": [
+				"../Rogue/1268.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1269.svg",
+				"../Rogue/1280.svg"
+			]
+		},
+		"hawkstrike": {
+			"start": [
+				"../Rogue/1281.svg",
+				"../Rogue/1293.svg"
+			],
+			"loop": [
+				"../Rogue/1294.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1295.svg",
+				"../Rogue/1308.svg"
+			]
+		},
+		"quickstab": {
+			"start": [
+				"../Rogue/1309.svg",
+				"../Rogue/1313.svg"
+			],
+			"loop": [
+				"../Rogue/1314.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1315.svg",
+				"../Rogue/1324.svg"
+			]
+		},
+		"plunge": {
+			"start": [
+				"../Rogue/1325.svg",
+				"../Rogue/1349.svg"
+			],
+			"loop": [
+				"../Rogue/1350.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1351.svg",
+				"../Rogue/1358.svg"
+			]
+		},
+		"quickplunge": {
+			"start": [
+				"../Rogue/1359.svg",
+				"../Rogue/1370.svg"
+			],
+			"loop": [
+				"../Rogue/1371.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1372.svg",
+				"../Rogue/1379.svg"
+			]
+		},
+		"spinslash": {
+			"start": [
+				"../Rogue/1380.svg",
+				"../Rogue/1395.svg"
+			],
+			"loop": [
+				"../Rogue/1396.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1397.svg",
+				"../Rogue/1408.svg"
+			]
+		},
+		"stabbystab": {
+			"start": [
+				"../Rogue/1409.svg",
+				"../Rogue/1495.svg"
+			],
+			"loop": [
+				"../Rogue/1496.svg",
+				null
+			],
+			"end": [
+				null,
+				null
+			]
+		},
+		"spinslash2": {
+			"start": [
+				"../Rogue/1498.svg",
+				"../Rogue/1517.svg"
+			],
+			"loop": [
+				"../Rogue/1518.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1519.svg",
+				"../Rogue/1528.svg"
+			]
+		},
+		"quickpounce": {
+			"start": [
+				"../Rogue/1530.svg",
+				"../Rogue/11153791.svg"
+			],
+			"loop": [
+				"../Rogue/1538.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1539.svg",
+				"../Rogue/1552.svg"
+			]
+		},
+		"deathdance": {
+			"start": [
+				"../Rogue/1553.svg",
+				"../Rogue/1656.svg"
+			],
+			"loop": [
+				"../Rogue/1657.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1658.svg",
+				null
+			]
+		},
+		"dashopen": {
+			"start": [
+				"../Rogue/1659.svg",
+				"../Rogue/1666.svg"
+			],
+			"loop": [
+				"../Rogue/1667.svg",
+				"../Rogue/1669.svg"
+			],
+			"end": [
+				"../Rogue/1670.svg",
+				null
+			]
+		},
+		"dashclose": {
+			"start": [
+				"../Rogue/1671.svg",
+				"../Rogue/1689.svg"
+			],
+			"loop": [
+				"../Rogue/1690.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1691.svg",
+				null
+			]
+		},
+		"dashopen2": {
+			"start": [
+				"../Rogue/1692.svg",
+				"../Rogue/1694.svg"
+			],
+			"loop": [
+				"../Rogue/1695.svg",
+				"../Rogue/1699.svg"
+			],
+			"end": [
+				"../Rogue/1700.svg",
+				null
+			]
+		},
+		"dashclose2": {
+			"start": [
+				"../Rogue/1701.svg",
+				"../Rogue/1707.svg"
+			],
+			"loop": [
+				"../Rogue/1708.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1709.svg",
+				null
+			]
+		},
+		"hopslash": {
+			"start": [
+				"../Rogue/1710.svg",
+				"../Rogue/1724.svg"
+			],
+			"loop": [
+				"../Rogue/1725.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1726.svg",
+				null
+			]
+		},
+		"lowstance": {
+			"start": [
+				"../Rogue/1727.svg",
+				"../Rogue/1761.svg"
+			],
+			"loop": [
+				"../Rogue/1762.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1763.svg",
+				null
+			]
+		},
+		"lungestrike": {
+			"start": [
+				null,
+				null
+			],
+			"loop": [
+				"../Rogue/1764.svg",
+				"../Rogue/1780.svg"
+			],
+			"end": [
+				"../Rogue/1781.svg",
+				"../Rogue/1792.svg"
+			]
+		},
+		"heavyblow": {
+			"start": [
+				"../Rogue/1793.svg",
+				"../Rogue/1808.svg"
+			],
+			"loop": [
+				"../Rogue/1809.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1810.svg",
+				null
+			]
+		},
+		"heavyblow2": {
+			"start": [
+				"../Rogue/1811.svg",
+				"../Rogue/1826.svg"
+			],
+			"loop": [
+				"../Rogue/1827.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1828.svg",
+				null
+			]
+		},
+		"lowblow": {
+			"start": [
+				"../Rogue/1829.svg",
+				"../Rogue/1841.svg"
+			],
+			"loop": [
+				"../Rogue/1842.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1843.svg",
+				null
+			]
+		},
+		"twistslash": {
+			"start": [
+				"../Rogue/1844.svg",
+				"../Rogue/1858.svg"
+			],
+			"loop": [
+				"../Rogue/1859.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1860.svg",
+				null
+			]
+		},
+		"leapstrike": {
+			"start": [
+				"../Rogue/1861.svg",
+				"../Rogue/1878.svg"
+			],
+			"loop": [
+				"../Rogue/1879.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1880.svg",
+				null
+			]
+		},
+		"severstrike": {
+			"start": [
+				"../Rogue/1882.svg",
+				"../Rogue/1907.svg"
+			],
+			"loop": [
+				"../Rogue/1908.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1909.svg",
+				null
+			]
+		},
+		"assasinclose": {
+			"start": [
+				"../Rogue/1910.svg",
+				"../Rogue/1936.svg"
+			],
+			"loop": [
+				"../Rogue/1937.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1938.svg",
+				null
+			]
+		},
+		"powerup": {
+			"start": [
+				"../Rogue/1939.svg",
+				"../Rogue/1956.svg"
+			],
+			"loop": [
+				"../Rogue/1957.svg",
+				null
+			],
+			"end": [
+				"../Rogue/1958.svg",
+				null
+			]
+		}
+	},
+	"emojis": {
+		"name": "Emojis",
+		"wave": {
+			"start": [
+				"../Rogue/1960.svg",
+				"../Rogue/1982.svg"
+			],
+			"loop": [
+				null,
+				null
+			],
+			"end": [
+				"../Rogue/1983.svg",
+				"../Rogue/1987.svg"
+			]
+		},
+		"cheer": {
+			"start": [
+				"../Rogue/1989.svg",
+				"../Rogue/1994.svg"
+			],
+			"loop": [
+				"../Rogue/1995.svg",
+				"../Rogue/2005.svg"
+			],
+			"end": [
+				"../Rogue/2006.svg",
+				"../Rogue/2009.svg"
+			]
+		},
+		"dance": {
+			"start": [
+				null,
+				null
+			],
+			"loop": [
+				"../Rogue/2034.svg",
+				"../Rogue/2093.svg"
+			],
+			"end": [
+				null,
+				null
+			]
+		},
+		"toss": {
+			"start": [
+				"../Rogue/2094.svg",
+				"../Rogue/2095.svg"
+			],
+			"loop": [
+				"../Rogue/2096.svg",
+				"../Rogue/2120.svg"
+			],
+			"end": [
+				null,
+				null
+			]
+		},
+		"charge": {
+			"start": [
+				"../Rogue/2123.svg",
+				"../Rogue/2162.svg"
+			],
+			"loop": [
+				"../Rogue/2163.svg",
+				null
+			],
+			"end": [
+				"../Rogue/2164.svg",
+				"../Rogue/2191.svg"
+			]
+		},
+		"eyesonyou": {
+			"start": [
+				"../Rogue/2193.svg",
+				"../Rogue/2218.svg"
+			],
+			"loop": [
+				"../Rogue/2219.svg",
+				"../Rogue/2248.svg"
+			],
+			"end": [
+				"../Rogue/2249.svg",
+				"../Rogue/2275.svg"
+			]
+		},
+		"lean": {
+			"start": [
+				"../Rogue/2278.svg",
+				"../Rogue/2295.svg"
+			],
+			"loop": [
+				"../Rogue/2296.svg",
+				"../Rogue/2324.svg"
+			],
+			"loop2": [
+				"../Rogue/2327.svg",
+				"../Rogue/2426.svg"
+			],
+			"end": [
+				null,
+				null
+			]
+		},
+		"point": {
+			"start": [
+				"../Rogue/2429.svg",
+				"../Rogue/2441.svg"
+			],
+			"loop": [
+				"../Rogue/2442.svg",
+				"../Rogue/2459.svg"
+			],
+			"end": [
+				"../Rogue/2460.svg",
+				"../Rogue/2471.svg"
+			]
+		},
+		"shrug": {
+			"start": [
+				"../Rogue/2474.svg",
+				"../Rogue/2492.svg"
+			],
+			"loop": [
+				"../Rogue/2493.svg",
+				null
+			],
+			"end": [
+				"../Rogue/2494.svg",
+				"../Rogue/2509.svg"
+			]
+		}
+	},
+	"summon": {
+		"name": "Summon",
+		"start": [
+			"../Rogue/2010.svg",
+			"../Rogue/2023.svg"
+		],
+		"loop": [
+			"../Rogue/2024.svg",
+			null
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"summonko": {
+		"name": "Summon KO",
+		"start": [
+			"../Rogue/2026.svg",
+			"../Rogue/2031.svg"
+		],
+		"loop": [
+			"../Rogue/2032.svg",
+			null
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"shoot_alt": {
+		"start": [
+			"../Rogue/2649.svg",
+			"../Rogue/2660.svg"
+		],
+		"loop": [
+			null,
+			null
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"shoot_alt2": {
+		"start": [
+			"../Rogue/2661.svg",
+			"../Rogue/2671.svg"
+		],
+		"loop": [
+			null,
+			null
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"shootup_alt": {
+		"start": [
+			"../Rogue/2672.svg",
+			"../Rogue/2683.svg"
+		],
+		"loop": [
+			null,
+			null
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"shootup_altz": {
+		"start": [
+			"../Rogue/2684.svg",
+			"../Rogue/2695.svg"
+		],
+		"loop": [
+			null,
+			null
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"shootdown_altz": {
+		"start": [
+			"../Rogue/2696.svg",
+			"../Rogue/2707.svg"
+		],
+		"loop": [
+			null,
+			null
+		],
+		"end": [
+			null,
+			null
+		]
+	},
+	"shootdown_alt": {
+		"start": [
+			"../Rogue/2708.svg",
+			"../Rogue/2718.svg"
+		],
+		"loop": [
+			null,
+			null
+		],
+		"end": [
+			null,
+			null
+		]
+	}
+}
