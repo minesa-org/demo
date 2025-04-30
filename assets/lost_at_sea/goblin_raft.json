@@ -1,0 +1,9 @@
+{
+    "raft": "./assets/goblin_raft/raft.svg",
+    "flag": {
+        "loop": [
+            "./assets/goblin_raft/flag/1.svg",
+            "./assets/goblin_raft/flag/12.svg"
+        ]
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "clouds": {
+        "flicker_gray": {
+            "loop": [
+                "./assets/clouds/flicker_gray/1.svg",
+                "./assets/clouds/flicker_gray/24.svg"
+            ]
+        },
+        "flicker_purple": {
+            "loop": [
+                "./assets/clouds/flicker_purple/1.svg",
+                "./assets/clouds/flicker_purple/24.svg"
+            ]
+        }
+    }
+}

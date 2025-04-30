@@ -1,0 +1,8 @@
+{
+    "lighting": {
+        "loop": [
+            "./assets/thunder/1.svg",
+            "./assets/thunder/14.svg"
+        ]
+    }
+}

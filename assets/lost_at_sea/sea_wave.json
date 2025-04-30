@@ -1,0 +1,8 @@
+{
+    "wave": {
+        "loop": [
+            "./assets/sea_wave/1.svg",
+            "./assets/sea_wave/24.svg"
+        ]
+    }
+}

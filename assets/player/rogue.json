@@ -1,0 +1,16 @@
+{
+    "ready": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Rogue/1.svg",
+            "../Rogue/64.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    }
+}

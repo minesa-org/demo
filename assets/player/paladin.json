@@ -1,0 +1,16 @@
+{
+    "ready": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Paladin/32.svg",
+            "../Paladin/55.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    }
+}

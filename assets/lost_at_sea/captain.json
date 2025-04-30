@@ -1,0 +1,10 @@
+{
+    "captain": {
+        "steer": {
+            "loop": [
+                "./assets/captain/steer/929.svg",
+                "./assets/captain/steer/1105.svg"
+            ]
+        }
+    }
+}

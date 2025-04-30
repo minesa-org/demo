@@ -1,0 +1,16 @@
+{
+    "ready": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Mage/1.svg",
+            "../Mage/48.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    }
+}
