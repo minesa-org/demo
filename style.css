@@ -23,26 +23,3 @@ canvas {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
-
-.music-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 8px 12px;
-    background-color: rgba(0, 0, 0, 0.6);
-    color: white;
-    border: 1px solid #666;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    z-index: 100;
-    transition: background-color 0.3s;
-}
-
-.music-button:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-}
-
-.music-button.muted {
-    background-color: rgba(255, 0, 0, 0.3);
-}
