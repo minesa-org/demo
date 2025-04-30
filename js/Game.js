@@ -82,10 +82,6 @@ class Game {
         } else {
             this.player.stopY();
         }
-
-        if (this.keys[" "] || this.keys["Enter"]) {
-            this.player.attack();
-        }
     }
 
     update() {
