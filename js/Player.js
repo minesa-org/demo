@@ -4,7 +4,7 @@ class Player {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.speed = 8;
+        this.speed = 3.5;
         this.velocityX = 0;
         this.velocityY = 0;
 
@@ -23,6 +23,9 @@ class Player {
 
     async loadAnimations(jsonPath, characterFolder) {
         try {
+            console.log(
+                `Loading animations from ${jsonPath} for ${characterFolder}`
+            );
             const response = await fetch(jsonPath);
             if (!response.ok) {
                 throw new Error(
@@ -31,6 +34,7 @@ class Player {
             }
 
             this.animations = await response.json();
+            console.log("Animation data loaded:", this.animations);
 
             for (const animName in this.animations) {
                 const anim = this.animations[animName];
@@ -123,34 +127,26 @@ class Player {
     updateAnimationFrame() {
         if (this.currentFrames.length === 0) return;
 
-        // Increment frame index
         this.currentFrameIndex++;
 
-        // Check if we've reached the end of the current sequence
         if (this.currentFrameIndex >= this.currentFrames.length) {
-            // Handle different animation states
             if (this.state === "starting") {
-                // Transition from start to loop
                 this.state = "looping";
                 this.loadAnimationSequence("loop");
             } else if (this.state === "ending") {
-                // Transition from end to ready
                 this.state = "looping";
                 this.currentAnimation = "ready";
                 this.loadAnimationSequence("loop");
             } else {
-                // Loop the current animation
                 this.currentFrameIndex = 0;
             }
         }
     }
 
     loadAnimationSequence(sequenceType) {
-        // Get the animation data for the current animation
         const anim = this.animations[this.currentAnimation];
         if (!anim) return;
 
-        // Determine which sequence to use (start, loop, or end)
         let sequence;
         if (
             sequenceType === "start" &&
@@ -167,16 +163,12 @@ class Player {
         ) {
             sequence = anim.end;
         } else {
-            // Default to loop sequence
             sequence = anim.loop;
         }
 
-        // Make sure the sequence is valid
         if (sequence && sequence[0] !== null && sequence[1] !== null) {
-            // Clear current frames
             this.currentFrames = [];
 
-            // Extract frame numbers from paths
             const startPath = sequence[0];
             const endPath = sequence[1];
 
@@ -185,22 +177,28 @@ class Player {
             );
             const endFrame = parseInt(endPath.split("/").pop().split(".")[0]);
 
-            // Create array of frame paths
             for (let i = startFrame; i <= endFrame; i++) {
                 this.currentFrames.push(
                     `assets/player/${this.characterFolder}/${i}.svg`
                 );
             }
 
-            // Reset frame index
             this.currentFrameIndex = 0;
         }
     }
 
     render(ctx) {
-        if (this.currentFrames.length === 0) return;
+        if (this.currentFrames.length === 0) {
+            console.log("No frames to render for player");
+            return;
+        }
 
         const framePath = this.currentFrames[this.currentFrameIndex];
+        console.log(
+            `Rendering player frame: ${framePath}, index: ${
+                this.currentFrameIndex
+            }/${this.currentFrames.length - 1}`
+        );
 
         const sprite = this.sprites[framePath];
         if (sprite && sprite.complete) {
@@ -218,32 +216,32 @@ class Player {
             } else {
                 ctx.drawImage(sprite, this.x, this.y, this.width, this.height);
             }
+        } else {
+            console.log(
+                `Sprite not ready: ${framePath}, loaded: ${
+                    sprite ? true : false
+                }, complete: ${sprite ? sprite.complete : false}`
+            );
         }
     }
 
     setAnimation(animName, characterFolder, resetFrame = true) {
-        // Check if the animation exists and needs to be changed
         const anim = this.animations[animName];
         if (!anim || (this.currentAnimation === animName && !resetFrame)) {
             return;
         }
 
-        // Set the new animation and character folder
         this.currentAnimation = animName;
         this.characterFolder = characterFolder;
 
-        // Handle different animation types
         if (animName === "run") {
-            // For run animation, start with the "start" sequence
             this.state = "starting";
             this.loadAnimationSequence("start");
         } else {
-            // For other animations, use the "loop" sequence
             this.state = "looping";
             this.loadAnimationSequence("loop");
         }
 
-        // Reset frame counters if needed
         if (resetFrame) {
             this.currentFrameIndex = 0;
             this.frameCount = 0;

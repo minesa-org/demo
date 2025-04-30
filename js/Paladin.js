@@ -2,8 +2,8 @@ import Player from "./Player.js";
 
 class Paladin extends Player {
     constructor(x, y) {
-        const width = 639.65;
-        const height = 729.7;
+        const width = 319.83; // Half the original size for smaller canvas
+        const height = 364.85; // Half the original size for smaller canvas
         const frameDelay = 2;
         super(x, y, width, height, frameDelay);
 

@@ -2,8 +2,8 @@ import Player from "./Player.js";
 
 class Rogue extends Player {
     constructor(x, y) {
-        const width = 958.875;
-        const height = 666.225;
+        const width = 479.44; // Half the original size for smaller canvas
+        const height = 333.11; // Half the original size for smaller canvas
         const frameDelay = 2;
         super(x, y, width, height, frameDelay);
 

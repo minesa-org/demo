@@ -2,9 +2,9 @@ import Player from "./Player.js";
 
 class Mage extends Player {
     constructor(x, y) {
-        const width = 442.425;
-        const height = 767.4;
-        const frameDelay = 2;
+        const width = 221.21; // Half the original size for smaller canvas
+        const height = 383.7; // Half the original size for smaller canvas
+        const frameDelay = 1.8;
         super(x, y, width, height, frameDelay);
 
         this.characterFolder = "Mage";
