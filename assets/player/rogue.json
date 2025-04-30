@@ -12,5 +12,20 @@
             null,
             null
         ]
+    },
+    "run": {
+        "name": "Run",
+        "start": [
+            "../Rogue/559.svg",
+            "../Rogue/566.svg"
+        ],
+        "loop": [
+            "../Rogue/567.svg",
+            "../Rogue/582.svg"
+        ],
+        "end": [
+            "../Rogue/583.svg",
+            "../Rogue/595.svg"
+        ]
     }
 }

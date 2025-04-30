@@ -5,12 +5,26 @@
             null
         ],
         "loop": [
-            "../Mage/1.svg",
+            "../Mage/2.svg",
             "../Mage/48.svg"
         ],
         "end": [
             null,
             null
+        ]
+    },
+    "run": {
+        "start": [
+            "../Mage/390.svg",
+            "../Mage/398.svg"
+        ],
+        "loop": [
+            "../Mage/399.svg",
+            "../Mage/412.svg"
+        ],
+        "end": [
+            "../Mage/413.svg",
+            "../Mage/428.svg"
         ]
     }
 }
