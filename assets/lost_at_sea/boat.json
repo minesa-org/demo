@@ -1,3 +1,6 @@
 {
-    "boat": "./assets/lost_at_sea/boat/Boat.svg"
+    "boat": {
+        "player_ground": "./assets/lost_at_sea/boat/boat_player_ground.svg",
+        "side_look": "./assets/lost_at_sea/boat/boat_side_look.svg"
+    }
 }
