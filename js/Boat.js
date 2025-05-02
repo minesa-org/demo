@@ -4,26 +4,41 @@ class Boat {
         this.y = y;
         this.width = width;
         this.height = height;
+
+        // Configurable settings for each boat variant
+        this.variantSettings = {
+            player_ground: {
+                scaleX: 1, // Width scale factor
+                scaleY: 0.9, // Height scale factor
+                offsetX: -0.1, // Horizontal position offset (as a factor of width)
+                offsetY: 0, // Vertical position offset (as a factor of height)
+            },
+            side_look: {
+                scaleX: 1.2, // Width scale factor
+                scaleY: 1.12, // Height scale factor
+                offsetX: -0.12, // Horizontal position offset (as a factor of width)
+                offsetY: -0.09, // Vertical position offset (as a factor of height)
+            },
+        };
+
         this.sprites = {
             player_ground: null,
             side_look: null,
         };
-        this.currentVariant = "side_look"; // Start with side_look as default
+        this.currentVariant = "side_look";
         this.loaded = {
             player_ground: false,
             side_look: false,
         };
 
-        // Gravity properties
         this.velocityY = 0;
         this.gravity = 0.2;
         this.terminalVelocity = 5;
         this.isFloating = true;
-        this.floatAmplitude = 5; // Pixels to float up and down
-        this.floatSpeed = 0.02; // Speed of floating motion
-        this.floatTime = 0; // Time counter for floating motion
+        this.floatAmplitude = 5;
+        this.floatSpeed = 0.02;
+        this.floatTime = 0;
 
-        // Original position for reference
         this.originalY = y;
     }
 
@@ -136,42 +151,45 @@ class Boat {
     }
 
     render(ctx) {
-        // Always render both boat variants side by side
-
-        // Render the player_ground variant on the left side
+        // Render player_ground variant
         if (
             this.loaded.player_ground &&
             this.sprites.player_ground &&
             this.sprites.player_ground.complete
         ) {
-            // Calculate position for player_ground (left side)
-            const playerGroundX = this.x - this.width * 0; // Shift left
-            const playerGroundY = this.y - this.height * 0.035;
+            const settings = this.variantSettings.player_ground;
+            const variantWidth = this.width * settings.scaleX;
+            const variantHeight = this.height * settings.scaleY;
+            const variantX = this.x + this.width * settings.offsetX;
+            const variantY = this.y + this.height * settings.offsetY;
 
             ctx.drawImage(
                 this.sprites.player_ground,
-                playerGroundX,
-                playerGroundY,
-                this.width,
-                this.height
+                variantX,
+                variantY,
+                variantWidth,
+                variantHeight
             );
         }
 
-        // Render the side_look variant on the right side
+        // Render side_look variant
         if (
             this.loaded.side_look &&
             this.sprites.side_look &&
             this.sprites.side_look.complete
         ) {
-            // Calculate position for side_look (right side)
-            const sideLookX = this.x + this.width * 0; // Shift right
+            const settings = this.variantSettings.side_look;
+            const variantWidth = this.width * settings.scaleX;
+            const variantHeight = this.height * settings.scaleY;
+            const variantX = this.x + this.width * settings.offsetX;
+            const variantY = this.y + this.height * settings.offsetY;
 
             ctx.drawImage(
                 this.sprites.side_look,
-                sideLookX,
-                this.y,
-                this.width,
-                this.height
+                variantX,
+                variantY,
+                variantWidth,
+                variantHeight
             );
         }
     }
