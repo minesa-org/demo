@@ -5,19 +5,18 @@ class Boat {
         this.width = width;
         this.height = height;
 
-        // Configurable settings for each boat variant
         this.variantSettings = {
             player_ground: {
-                scaleX: 1, // Width scale factor
-                scaleY: 0.9, // Height scale factor
-                offsetX: -0.1, // Horizontal position offset (as a factor of width)
-                offsetY: 0, // Vertical position offset (as a factor of height)
+                scaleX: 1,
+                scaleY: 0.9,
+                offsetX: -0.1,
+                offsetY: 0,
             },
             side_look: {
-                scaleX: 1.2, // Width scale factor
-                scaleY: 1.12, // Height scale factor
-                offsetX: -0.12, // Horizontal position offset (as a factor of width)
-                offsetY: -0.09, // Vertical position offset (as a factor of height)
+                scaleX: 1.2,
+                scaleY: 1.12,
+                offsetX: -0.12,
+                offsetY: -0.09,
             },
         };
 
@@ -44,64 +43,34 @@ class Boat {
 
     async loadImage(jsonPath) {
         try {
-            console.log(`Loading boat data from ${jsonPath}`);
             const response = await fetch(jsonPath);
             if (!response.ok) {
                 throw new Error(`Failed to load boat data from ${jsonPath}`);
             }
 
             const boatData = await response.json();
-            console.log("Boat data loaded:", boatData);
 
             if (boatData.boat) {
-                // Load player ground boat
                 if (boatData.boat.player_ground) {
                     this.sprites.player_ground = new Image();
                     this.sprites.player_ground.src =
                         boatData.boat.player_ground;
-                    console.log(
-                        `Player ground boat image path set to: ${this.sprites.player_ground.src}`
-                    );
 
                     this.sprites.player_ground.onload = () => {
-                        console.log(
-                            "Player ground boat image loaded successfully"
-                        );
                         this.loaded.player_ground = true;
-                    };
-
-                    this.sprites.player_ground.onerror = () => {
-                        console.error(
-                            "Failed to load player ground boat image from path:",
-                            this.sprites.player_ground.src
-                        );
                     };
                 }
 
-                // Load side look boat
                 if (boatData.boat.side_look) {
                     this.sprites.side_look = new Image();
                     this.sprites.side_look.src = boatData.boat.side_look;
-                    console.log(
-                        `Side look boat image path set to: ${this.sprites.side_look.src}`
-                    );
 
                     this.sprites.side_look.onload = () => {
-                        console.log("Side look boat image loaded successfully");
                         this.loaded.side_look = true;
-                    };
-
-                    this.sprites.side_look.onerror = () => {
-                        console.error(
-                            "Failed to load side look boat image from path:",
-                            this.sprites.side_look.src
-                        );
                     };
                 }
             }
-        } catch (error) {
-            console.error("Error loading boat images:", error);
-        }
+        } catch (error) {}
     }
 
     setVariant(variant) {
@@ -109,39 +78,27 @@ class Boat {
             this.currentVariant = variant;
             return true;
         }
-        console.warn(
-            `Boat variant '${variant}' not available or not loaded yet.`
-        );
         return false;
     }
 
     update() {
-        // Apply different physics based on the boat variant
         if (this.currentVariant === "side_look") {
-            // Floating motion for side_look variant
             this.isFloating = true;
             this.floatTime += this.floatSpeed;
-            // Use sine wave for smooth up and down motion
             this.y =
                 this.originalY + Math.sin(this.floatTime) * this.floatAmplitude;
         } else if (this.currentVariant === "player_ground") {
-            // Gravity for player_ground variant
             this.isFloating = false;
-
-            // Apply gravity
             this.velocityY += this.gravity;
 
-            // Limit falling speed
             if (this.velocityY > this.terminalVelocity) {
                 this.velocityY = this.terminalVelocity;
             }
 
-            // Update position
             this.y += this.velocityY;
 
-            // Check if boat has reached the bottom of the screen
             const canvas = document.getElementById("gameCanvas");
-            const groundLevel = canvas.height - this.height; // Position boat at bottom of screen
+            const groundLevel = canvas.height - this.height;
 
             if (this.y > groundLevel) {
                 this.y = groundLevel;
@@ -151,12 +108,9 @@ class Boat {
     }
 
     render(ctx) {
-        // Render both variants (this method is kept for backward compatibility)
         this.renderPlayerGround(ctx);
         this.renderSideLook(ctx);
     }
-
-    // Render only the player_ground variant
     renderPlayerGround(ctx) {
         if (
             this.loaded.player_ground &&
@@ -179,7 +133,6 @@ class Boat {
         }
     }
 
-    // Render only the side_look variant
     renderSideLook(ctx) {
         if (
             this.loaded.side_look &&
@@ -202,7 +155,6 @@ class Boat {
         }
     }
 
-    // Method to cycle through available boat variants
     cycleVariant() {
         const variants = Object.keys(this.sprites).filter(
             (variant) => this.loaded[variant]
@@ -212,7 +164,6 @@ class Boat {
         const currentIndex = variants.indexOf(this.currentVariant);
         const nextIndex = (currentIndex + 1) % variants.length;
         this.currentVariant = variants[nextIndex];
-        console.log(`Switched to boat variant: ${this.currentVariant}`);
     }
 }
 

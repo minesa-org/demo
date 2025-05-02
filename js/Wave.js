@@ -23,14 +23,12 @@ class Wave {
 
     async loadAnimations(jsonPath) {
         try {
-            console.log(`Loading wave animations from ${jsonPath}`);
             const response = await fetch(jsonPath);
             if (!response.ok) {
                 throw new Error(`Failed to load wave data from ${jsonPath}`);
             }
 
             const waveData = await response.json();
-            console.log("Wave data loaded:", waveData);
 
             if (
                 waveData.wave &&
@@ -54,14 +52,11 @@ class Wave {
                         startPath.lastIndexOf("/") + 1
                     );
                     const path = `${basePath}${i}.svg`;
-                    console.log(`Adding wave frame: ${path}`);
                     this.currentFrames.push(path);
                     this.loadSprite(path);
                 }
             }
-        } catch (error) {
-            console.error("Error loading wave animations:", error);
-        }
+        } catch (error) {}
     }
 
     loadSprite(path) {
@@ -100,7 +95,6 @@ class Wave {
 
     render(ctx) {
         if (this.currentFrames.length === 0) {
-            console.log("No frames to render for wave");
             return;
         }
 
@@ -109,12 +103,6 @@ class Wave {
 
         if (sprite && sprite.complete) {
             ctx.drawImage(sprite, this.x, this.y, this.width, this.height);
-        } else {
-            console.log(
-                `Sprite not ready for wave: ${framePath}, loaded: ${
-                    sprite ? true : false
-                }, complete: ${sprite ? sprite.complete : false}`
-            );
         }
     }
 }

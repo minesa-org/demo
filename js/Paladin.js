@@ -2,17 +2,16 @@ import Player from "./Player.js";
 
 class Paladin extends Player {
     constructor(x, y) {
-        const width = 319.83; // Half the original size for smaller canvas
-        const height = 364.85; // Half the original size for smaller canvas
+        const width = 319.83;
+        const height = 364.85;
         const frameDelay = 2;
         super(x, y, width, height, frameDelay);
 
         this.characterFolder = "Paladin";
         this.jsonPath = "assets/player/paladin.json";
 
-        // Paladin-specific hitbox adjustments
-        this.effectiveWidthRatio = 0.3; // Reduced effective width
-        this.effectiveWidthOffset = 0.1; // Centered offset (calculated as (1 - ratio) / 2)
+        this.effectiveWidthRatio = 0.3;
+        this.effectiveWidthOffset = 0.1;
 
         this.loadAnimations(this.jsonPath, this.characterFolder);
     }

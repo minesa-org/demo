@@ -103,9 +103,7 @@ class Player {
             }
 
             this.setAnimation("ready", characterFolder);
-        } catch (error) {
-            // Error handling
-        }
+        } catch (error) {}
     }
 
     loadSprite(path) {

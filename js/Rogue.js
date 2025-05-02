@@ -2,17 +2,16 @@ import Player from "./Player.js";
 
 class Rogue extends Player {
     constructor(x, y) {
-        const width = 479.44; // Half the original size for smaller canvas
-        const height = 333.11; // Half the original size for smaller canvas
+        const width = 479.44; 
+        const height = 333.11; 
         const frameDelay = 2;
         super(x, y, width, height, frameDelay);
 
         this.characterFolder = "Rogue";
         this.jsonPath = "assets/player/rogue.json";
 
-        // Rogue-specific hitbox adjustments
-        this.effectiveWidthRatio = 0.3; // Reduced effective width
-        this.effectiveWidthOffset = 0.35; // Centered offset (calculated as (1 - ratio) / 2)
+        this.effectiveWidthRatio = 0.3; 
+        this.effectiveWidthOffset = 0.35; 
 
         this.loadAnimations(this.jsonPath, this.characterFolder);
     }

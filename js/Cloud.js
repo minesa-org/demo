@@ -25,28 +25,22 @@ class Cloud {
                 ? initialDelay
                 : Math.floor(Math.random() * 120);
         this.delayRemaining = this.initialDelay;
+
+        this.speed = this.type === "gray" ? 0.1 : 0.05;
+        this.initialX = x;
     }
 
     async loadAnimations(jsonPath) {
         try {
-            console.log(
-                `Loading cloud animations from ${jsonPath} for ${this.type} cloud`
-            );
             const response = await fetch(jsonPath);
             if (!response.ok) {
                 throw new Error(`Failed to load cloud data from ${jsonPath}`);
             }
 
             const cloudData = await response.json();
-            console.log("Cloud data loaded:", cloudData);
-
             const cloudType =
                 this.type === "purple" ? "flicker_purple" : "flicker_gray";
             const cloudAnimation = cloudData.clouds[cloudType];
-            console.log(
-                `Cloud animation data for ${cloudType}:`,
-                cloudAnimation
-            );
 
             if (
                 cloudAnimation &&
@@ -70,14 +64,11 @@ class Cloud {
                         startPath.lastIndexOf("/") + 1
                     );
                     const path = `${basePath}${i}.svg`;
-                    console.log(`Adding cloud frame: ${path}`);
                     this.currentFrames.push(path);
                     this.loadSprite(path);
                 }
             }
-        } catch (error) {
-            console.error("Error loading cloud animations:", error);
-        }
+        } catch (error) {}
     }
 
     loadSprite(path) {
@@ -88,7 +79,7 @@ class Cloud {
         }
     }
 
-    update() {
+    update(canvasWidth) {
         if (this.delayRemaining > 0) {
             this.delayRemaining--;
 
@@ -106,11 +97,24 @@ class Cloud {
             this.currentFrameIndex =
                 (this.currentFrameIndex + 1) % this.currentFrames.length;
         }
+
+        this.x -= this.speed;
+
+        if (this.x < -this.width) {
+            this.x = canvasWidth;
+
+            const yVariation = 20;
+            this.y += Math.random() * yVariation * 2 - yVariation;
+
+            if (this.type === "purple" && this.y < 50) this.y = 50;
+            if (this.type === "purple" && this.y > 120) this.y = 120;
+            if (this.type === "gray" && this.y < 0) this.y = 0;
+            if (this.type === "gray" && this.y > 50) this.y = 50;
+        }
     }
 
     render(ctx) {
         if (this.currentFrames.length === 0) {
-            console.log(`No frames to render for ${this.type} cloud`);
             return;
         }
 
@@ -119,14 +123,6 @@ class Cloud {
 
         if (sprite && sprite.complete) {
             ctx.drawImage(sprite, this.x, this.y, this.width, this.height);
-        } else {
-            console.log(
-                `Sprite not ready for ${
-                    this.type
-                } cloud: ${framePath}, loaded: ${
-                    sprite ? true : false
-                }, complete: ${sprite ? sprite.complete : false}`
-            );
         }
     }
 }

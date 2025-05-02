@@ -5,6 +5,7 @@ import Cloud from "./Cloud.js";
 import Boat from "./Boat.js";
 import Wave from "./Wave.js";
 import Splash from "./Splash.js";
+import Captain from "./Captain.js";
 
 class Game {
     constructor() {
@@ -24,6 +25,11 @@ class Game {
         this.waveJsonPath = "assets/lost_at_sea/sea_wave.json";
         this.splashes = [];
         this.splashJsonPath = "assets/lost_at_sea/splash.json";
+        this.captain = null;
+        this.captainJsonPath = "assets/lost_at_sea/captain.json";
+
+        this.isPlayerMoving = false;
+        this.movementSoundPlaying = false;
 
         this.playerBoundaries = {
             minX: 0,
@@ -42,9 +48,11 @@ class Game {
         this.loadBackgroundImage();
         this.createClouds();
         this.createWaves();
+        this.initMovementSound();
 
         await this.createBoat();
         await this.createSplash();
+        await this.createCaptain();
 
         setTimeout(() => {
             if (this.boat) {
@@ -70,6 +78,10 @@ class Game {
 
                 if (this.player) {
                     this.adjustPlayerPosition();
+                }
+
+                if (this.captain) {
+                    this.adjustCaptainPosition();
                 }
             }
         }, 1000);
@@ -181,7 +193,54 @@ class Game {
         this.splashes.push(splash3);
     }
 
+    async createCaptain() {
+        try {
+            const captainWidth = 200;
+            const captainHeight = 260;
+            const captainX = 0;
+            const captainY = 0;
+
+            this.captain = new Captain(
+                captainX,
+                captainY,
+                captainWidth,
+                captainHeight,
+                3
+            );
+
+            const animationPromise = this.captain.loadAnimations(
+                this.captainJsonPath
+            );
+
+            const timeoutPromise = new Promise((resolve) => {
+                setTimeout(resolve, 5000);
+            });
+
+            await Promise.race([animationPromise, timeoutPromise]);
+        } catch (error) {
+            console.error("Error creating captain:", error);
+        }
+    }
+
+    adjustCaptainPosition() {
+        if (!this.captain || !this.boat) return;
+
+        // Position the captain at the right side of the boat
+        const sideLookSettings = this.boat.variantSettings.side_look;
+        const sideLookWidth = this.boat.width * sideLookSettings.scaleX;
+        const sideLookX =
+            this.boat.x + this.boat.width * sideLookSettings.offsetX;
+
+        // Position the captain at the end of the boat
+        this.captain.x =
+            sideLookX + sideLookWidth * 0.14 - this.captain.width / 2;
+        this.captain.y =
+            this.boat.y + this.boat.height * 0.53 - this.captain.height / 2;
+    }
+
     async createClouds() {
+        const canvasWidth = this.canvas.width;
+
         const purpleCloudsConfig = [
             {
                 x: 50,
@@ -193,7 +252,7 @@ class Game {
             },
             {
                 x: 250,
-                y: 100,
+                y: 105,
                 width: 275,
                 height: 80,
                 depth: 0.6,
@@ -201,7 +260,7 @@ class Game {
             },
             {
                 x: 450,
-                y: 100,
+                y: 95,
                 width: 275,
                 height: 80,
                 depth: 0.6,
@@ -216,27 +275,43 @@ class Game {
                 frameDelay: 20,
             },
             {
-                x: 50,
-                y: 50,
+                x: 850,
+                y: 90,
                 width: 300,
                 height: 90,
-                depth: 0.9,
+                depth: 0.6,
                 frameDelay: 20,
             },
             {
-                x: 300,
-                y: 50,
+                x: canvasWidth + 100,
+                y: 80,
                 width: 300,
                 height: 90,
-                depth: 0.9,
+                depth: 0.6,
                 frameDelay: 20,
             },
             {
-                x: 550,
-                y: 50,
+                x: canvasWidth + 350,
+                y: 110,
                 width: 300,
                 height: 90,
-                depth: 0.9,
+                depth: 0.6,
+                frameDelay: 20,
+            },
+            {
+                x: canvasWidth + 600,
+                y: 95,
+                width: 300,
+                height: 90,
+                depth: 0.6,
+                frameDelay: 20,
+            },
+            {
+                x: canvasWidth + 850,
+                y: 105,
+                width: 300,
+                height: 90,
+                depth: 0.6,
                 frameDelay: 20,
             },
         ];
@@ -252,7 +327,7 @@ class Game {
             },
             {
                 x: 300,
-                y: 0,
+                y: 5,
                 width: 375,
                 height: 90,
                 depth: 1.2,
@@ -261,6 +336,38 @@ class Game {
             {
                 x: 600,
                 y: 0,
+                width: 390,
+                height: 92,
+                depth: 1.2,
+                frameDelay: 20,
+            },
+            {
+                x: 900,
+                y: 10,
+                width: 400,
+                height: 95,
+                depth: 1.2,
+                frameDelay: 20,
+            },
+            {
+                x: canvasWidth + 200,
+                y: 5,
+                width: 400,
+                height: 95,
+                depth: 1.2,
+                frameDelay: 20,
+            },
+            {
+                x: canvasWidth + 500,
+                y: 0,
+                width: 375,
+                height: 90,
+                depth: 1.2,
+                frameDelay: 25,
+            },
+            {
+                x: canvasWidth + 800,
+                y: 10,
                 width: 390,
                 height: 92,
                 depth: 1.2,
@@ -443,21 +550,63 @@ class Game {
         this.keys[e.key] = false;
     }
 
-    processInput() {
-        if (this.keys["ArrowLeft"] || this.keys["a"]) {
-            this.player.moveLeft();
-        } else if (this.keys["ArrowRight"] || this.keys["d"]) {
-            this.player.moveRight();
-        } else {
-            this.player.stopX();
+    initMovementSound() {
+        this.movementSound = document.getElementById("movementSound");
+        if (this.movementSound) {
+            this.movementSound.volume = 0.7;
         }
+    }
 
-        if (this.keys["ArrowUp"] || this.keys["w"]) {
-            this.player.moveUp();
-        } else if (this.keys["ArrowDown"] || this.keys["s"]) {
-            this.player.moveDown();
-        } else {
-            this.player.stopY();
+    playMovementSound() {
+        if (this.movementSound && !this.movementSoundPlaying) {
+            this.movementSound
+                .play()
+                .then(() => {
+                    this.movementSoundPlaying = true;
+                })
+                .catch((error) => {
+                    console.error("Error playing movement sound:", error);
+                });
+        }
+    }
+
+    stopMovementSound() {
+        if (this.movementSound && this.movementSoundPlaying) {
+            this.movementSound.pause();
+            this.movementSoundPlaying = false;
+        }
+    }
+
+    processInput() {
+        const wasMoving = this.isPlayerMoving;
+        this.isPlayerMoving = false;
+
+        if (this.player) {
+            if (this.keys["ArrowLeft"] || this.keys["a"]) {
+                this.player.moveLeft();
+                this.isPlayerMoving = true;
+            } else if (this.keys["ArrowRight"] || this.keys["d"]) {
+                this.player.moveRight();
+                this.isPlayerMoving = true;
+            } else {
+                this.player.stopX();
+            }
+
+            if (this.keys["ArrowUp"] || this.keys["w"]) {
+                this.player.moveUp();
+                this.isPlayerMoving = true;
+            } else if (this.keys["ArrowDown"] || this.keys["s"]) {
+                this.player.moveDown();
+                this.isPlayerMoving = true;
+            } else {
+                this.player.stopY();
+            }
+
+            if (this.isPlayerMoving && !wasMoving) {
+                this.playMovementSound();
+            } else if (!this.isPlayerMoving && wasMoving) {
+                this.stopMovementSound();
+            }
         }
     }
 
@@ -481,8 +630,19 @@ class Game {
             this.player.update();
         }
 
+        try {
+            if (this.captain) {
+                this.captain.update();
+                if (this.boat) {
+                    this.adjustCaptainPosition();
+                }
+            }
+        } catch (error) {
+            console.error("Error updating captain:", error);
+        }
+
         for (const cloud of this.clouds) {
-            cloud.update();
+            cloud.update(this.canvas.width);
         }
 
         for (const wave of this.backWaves) {
@@ -558,16 +718,27 @@ class Game {
             this.player.render(this.ctx);
         }
 
+        try {
+            if (this.captain) {
+                this.ctx.save();
+                this.adjustCaptainPosition();
+                this.captain.render(this.ctx);
+                this.ctx.restore();
+            }
+        } catch (error) {
+            console.error("Error rendering captain:", error);
+        }
+
         if (this.boat && this.boat.loaded.side_look) {
             this.boat.renderSideLook(this.ctx);
         }
 
-        for (const wave of this.frontWaves) {
-            wave.render(this.ctx);
-        }
-
         for (const splash of this.splashes) {
             splash.render(this.ctx);
+        }
+
+        for (const wave of this.frontWaves) {
+            wave.render(this.ctx);
         }
     }
 

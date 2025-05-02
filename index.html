@@ -10,14 +10,146 @@
         <link
             rel="stylesheet"
             href="style.css" />
+        <style>
+            #audioControls {
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                z-index: 1000;
+                background-color: rgba(0, 0, 0, 0.5);
+                padding: 5px;
+                border-radius: 5px;
+                display: flex;
+                align-items: center;
+            }
+            #audioControls button {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 24px;
+                cursor: pointer;
+                margin: 0 5px;
+            }
+            #audioControls button:hover {
+                color: #4caf50;
+            }
+            .hidden {
+                display: none !important;
+            }
+        </style>
     </head>
     <body>
+        <div class="edge-hud">
+            <img
+                src="assets/edge_hud.svg"
+                alt="Game HUD Frame" />
+        </div>
+
         <div class="game-container">
             <canvas
                 id="gameCanvas"
-                width="800"
-                height="600"></canvas>
+                width="780"
+                height="580"></canvas>
         </div>
+
+        <audio
+            id="backgroundMusic"
+            loop>
+            <source
+                src="assets/audio/background_music_normal.mp3"
+                type="audio/mpeg" />
+
+            Your browser does not support the audio element.
+        </audio>
+
+        <audio
+            id="movementSound"
+            loop>
+            <source
+                src="assets/audio/sound_movement_wood.wav"
+                type="audio/mpeg" />
+            Your browser does not support the audio element.
+        </audio>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const audio = document.getElementById("backgroundMusic");
+                const audioIndicator =
+                    document.getElementById("audioIndicator");
+                const audioStatus = document.getElementById("audioStatus");
+                const muteToggleBtn = document.getElementById("muteToggleBtn");
+
+                audio.volume = 0.3;
+                let audioStarted = false;
+
+                const movementSound = document.getElementById("movementSound");
+                if (movementSound) {
+                    movementSound.volume = 0.7;
+                }
+
+                function startBackgroundMusic() {
+                    if (!audioStarted) {
+                        audio
+                            .play()
+                            .then(() => {
+                                audioStarted = true;
+                                audioIndicator.style.display = "block";
+                            })
+                            .catch(() => {});
+                    }
+                }
+
+                const userInteractionEvents = [
+                    "click",
+                    "keydown",
+                    "touchstart",
+                    "mousedown",
+                ];
+                userInteractionEvents.forEach((event) => {
+                    document.addEventListener(
+                        event,
+                        function () {
+                            startBackgroundMusic();
+                        },
+                        { once: true }
+                    );
+                });
+
+                window.addEventListener("load", function () {
+                    setTimeout(startBackgroundMusic, 1000);
+                });
+
+                muteToggleBtn.addEventListener("click", function () {
+                    audio.muted = !audio.muted;
+                    muteToggleBtn.textContent = audio.muted ? "🔇" : "🔊";
+                    audioStatus.textContent = audio.muted
+                        ? "♫ Muted"
+                        : "♫ Playing";
+                });
+
+                document.addEventListener("keydown", function (e) {
+                    if (e.key === "m" || e.key === "M") {
+                        audio.muted = !audio.muted;
+                        muteToggleBtn.textContent = audio.muted ? "🔇" : "🔊";
+                        audioStatus.textContent = audio.muted
+                            ? "♫ Muted"
+                            : "♫ Playing";
+                    }
+                });
+
+                audio.addEventListener("play", function () {
+                    audioIndicator.style.display = "block";
+                    audioStatus.textContent = audio.muted
+                        ? "♫ Muted"
+                        : "♫ Playing";
+                });
+
+                audio.addEventListener("pause", function () {
+                    audioStatus.textContent = "♫ Paused";
+                });
+            });
+        </script>
+
         <script
             src="main.js"
             type="module"></script>

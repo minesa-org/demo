@@ -17,14 +17,12 @@ class Splash {
 
     async loadAnimations(jsonPath, splashType = "_4") {
         try {
-            console.log(`Loading splash animations from ${jsonPath}`);
             const response = await fetch(jsonPath);
             if (!response.ok) {
                 throw new Error(`Failed to load splash data from ${jsonPath}`);
             }
 
             const splashData = await response.json();
-            console.log("Splash data loaded:", splashData);
 
             if (
                 splashData.splash &&
@@ -44,16 +42,12 @@ class Splash {
                 );
 
                 for (let i = startFrame; i <= endFrame; i++) {
-                    // Fix the path to point to the correct location
                     const path = `assets/lost_at_sea/splashes/${splashType}/${i}.svg`;
-                    console.log(`Adding splash frame: ${path}`);
                     this.currentFrames.push(path);
                     this.loadSprite(path);
                 }
             }
-        } catch (error) {
-            console.error("Error loading splash animations:", error);
-        }
+        } catch (error) {}
     }
 
     loadSprite(path) {
@@ -75,7 +69,6 @@ class Splash {
             this.frameCount = 0;
             this.currentFrameIndex++;
 
-            // Loop the animation when it reaches the end
             if (this.currentFrameIndex >= this.currentFrames.length) {
                 this.currentFrameIndex = 0;
             }
@@ -92,12 +85,6 @@ class Splash {
 
         if (sprite && sprite.complete) {
             ctx.drawImage(sprite, this.x, this.y, this.width, this.height);
-        } else {
-            console.log(
-                `Sprite not ready for splash: ${framePath}, loaded: ${
-                    sprite ? true : false
-                }, complete: ${sprite ? sprite.complete : false}`
-            );
         }
     }
 
