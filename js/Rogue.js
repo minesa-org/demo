@@ -10,6 +10,10 @@ class Rogue extends Player {
         this.characterFolder = "Rogue";
         this.jsonPath = "assets/player/rogue.json";
 
+        // Rogue-specific hitbox adjustments
+        this.effectiveWidthRatio = 0.3; // Reduced effective width
+        this.effectiveWidthOffset = 0.35; // Centered offset (calculated as (1 - ratio) / 2)
+
         this.loadAnimations(this.jsonPath, this.characterFolder);
     }
     moveLeft() {

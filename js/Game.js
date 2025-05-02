@@ -24,6 +24,12 @@ class Game {
         this.waveJsonPath = "assets/lost_at_sea/sea_wave.json";
         this.splashes = [];
         this.splashJsonPath = "assets/lost_at_sea/splash.json";
+
+        this.playerBoundaries = {
+            minX: 0,
+            maxX: 0,
+            set: false,
+        };
     }
 
     async init() {
@@ -37,59 +43,31 @@ class Game {
         this.createClouds();
         this.createWaves();
 
-        // Create boat first, then splashes (since splashes need boat position)
         await this.createBoat();
         await this.createSplash();
 
-        // Debug: Check boat variants after a short delay to ensure they're loaded
         setTimeout(() => {
             if (this.boat) {
-                console.log("Boat variants loaded status:", this.boat.loaded);
-                console.log("Current boat variant:", this.boat.currentVariant);
-                console.log(
-                    "Available boat sprites:",
-                    Object.keys(this.boat.sprites)
-                );
-
-                // Log the actual image paths to verify they're correct
-                console.log(
-                    "player_ground image path:",
-                    this.boat.sprites.player_ground?.src
-                );
-                console.log(
-                    "side_look image path:",
-                    this.boat.sprites.side_look?.src
-                );
-
-                // Force load both variants if they're not loaded yet
                 if (!this.boat.loaded.player_ground) {
-                    console.log("Force loading player_ground variant...");
                     this.boat.sprites.player_ground = new Image();
                     this.boat.sprites.player_ground.src =
                         "./assets/lost_at_sea/boat/boat_player_ground.svg";
                     this.boat.sprites.player_ground.onload = () => {
-                        console.log(
-                            "Player ground boat image loaded successfully"
-                        );
                         this.boat.loaded.player_ground = true;
                     };
                 }
 
                 if (!this.boat.loaded.side_look) {
-                    console.log("Force loading side_look variant...");
                     this.boat.sprites.side_look = new Image();
                     this.boat.sprites.side_look.src =
                         "./assets/lost_at_sea/boat/boat_side_look.svg";
                     this.boat.sprites.side_look.onload = () => {
-                        console.log("Side look boat image loaded successfully");
                         this.boat.loaded.side_look = true;
                     };
                 }
 
-                // Make sure we start with side_look variant visible on top
                 this.boat.setVariant("side_look");
 
-                // Adjust player position if present
                 if (this.player) {
                     this.adjustPlayerPosition();
                 }
@@ -100,14 +78,11 @@ class Game {
     async createWaves() {
         const waveHeight = 90;
         const waveWidth = 416;
-        // Add more waves to ensure full coverage with the wider boat
         const numWavesNeeded =
             Math.ceil(this.canvas.width / (waveWidth - 20)) + 2;
 
-        // Back waves (behind the boat)
         for (let i = 0; i < numWavesNeeded; i++) {
             const x = i * (waveWidth - 10);
-            // Position waves higher to be visible with the larger boat
             const y = this.canvas.height - waveHeight + 10;
             const initialDelay = Math.floor(Math.random() * 5);
             const frameDelay = 3;
@@ -124,10 +99,8 @@ class Game {
             this.backWaves.push(wave);
         }
 
-        // Front waves (in front of the boat)
         for (let i = 0; i < numWavesNeeded; i++) {
             const x = i * (waveWidth - 20);
-            // Position front waves higher to be visible with the larger boat
             const y = this.canvas.height - waveHeight + 60;
             const initialDelay = Math.floor(Math.random() * 5);
             const frameDelay = 3;
@@ -146,99 +119,52 @@ class Game {
     }
 
     async createBoat() {
-        // Set boat width to a reasonable size (half the canvas width)
-        // This prevents stretching while still making it large enough
         const boatWidth = this.canvas.width * 0.8;
-
-        // Calculate height based on aspect ratio to maintain proportions
         const boatHeight = this.canvas.height * 0.7;
-
-        // Position boat at the center of the canvas
         const boatX = (this.canvas.width - boatWidth) / 2;
-
-        // Position boat at the bottom of the screen, but leave some space for waves
         const boatY = this.canvas.height - boatHeight * 0.9;
 
         this.boat = new Boat(boatX, boatY, boatWidth, boatHeight);
         await this.boat.loadImage(this.boatJsonPath);
-
-        console.log(
-            "Boat created at position:",
-            boatX,
-            boatY,
-            "with dimensions:",
-            boatWidth,
-            "x",
-            boatHeight
-        );
     }
 
     async createSplash() {
         if (!this.boat) {
-            console.error(
-                "Boat not initialized yet. Cannot position splashes."
-            );
             return;
         }
 
-        // Get boat position and dimensions
         const boatX = this.boat.x;
         const boatY = this.boat.y;
         const boatWidth = this.boat.width;
         const boatHeight = this.boat.height;
 
-        // Calculate the position of the side_look boat (right side)
         const sideLookSettings = this.boat.variantSettings.side_look;
         const sideLookWidth = boatWidth * sideLookSettings.scaleX;
         const sideLookX = boatX + boatWidth * sideLookSettings.offsetX;
         const sideLookRightEdge = sideLookX + sideLookWidth;
         const boatBottomY = boatY + boatHeight * 0.8;
 
-        // Scale factors to make splashes appropriate size relative to boat
-        const scaleFactor = 1.0; // Adjusted scale factor
+        const scaleFactor = 1.0;
 
-        // Create splash type _4 (smallest splash at the front of the boat)
         const splash4Width = 130.4 * scaleFactor;
         const splash4Height = 54.65 * scaleFactor;
-        // Position splash at the right edge of the side_look boat, but ensure it's visible
         const splash4X = Math.min(
             sideLookRightEdge - splash4Width * 0.6,
             this.canvas.width - splash4Width
         );
-        const splash4Y = boatBottomY - splash4Height * 0.01; // Position at bottom of boat
+        const splash4Y = boatBottomY - splash4Height * 0.01;
         const splash4 = new Splash(
             splash4X,
             splash4Y,
             splash4Width,
             splash4Height,
-            3 // Slow animation
+            3
         );
         await splash4.loadAnimations(this.splashJsonPath, "_4");
         this.splashes.push(splash4);
 
-        // // Create splash type _2 (medium splash slightly further from boat)
-        // const splash2Width = 160.1 * scaleFactor;
-        // const splash2Height = 98.3 * scaleFactor;
-        // // Position splash right after the first splash, ensuring it's visible
-        // const splash2X = Math.min(
-        //     sideLookRightEdge + splash4Width * 0.2,
-        //     this.canvas.width - splash2Width
-        // );
-        // const splash2Y = boatBottomY - splash2Height * 0.1;
-        // const splash2 = new Splash(
-        //     splash2X,
-        //     splash2Y,
-        //     splash2Width,
-        //     splash2Height,
-        //     4 // Slow animation
-        // );
-        // await splash2.loadAnimations(this.splashJsonPath, "_2");
-        // this.splashes.push(splash2);
-
-        // Create splash type _3 (another medium splash further out)
         const splash3Width = 149.7 * scaleFactor;
         const splash3Height = 100.35 * scaleFactor;
-        // Position splash even further to the right, ensuring it's visible
         const splash3X = Math.min(
             splash4X + splash4Width * 0.4,
             this.canvas.width - splash3Width
@@ -249,46 +175,10 @@ class Game {
             splash3Y,
             splash3Width,
             splash3Height,
-            3 // Slow animation
+            3
         );
         await splash3.loadAnimations(this.splashJsonPath, "_3");
         this.splashes.push(splash3);
-
-        // Create splash type _1 (tallest splash furthest from boat)
-        // const splash1Width = 102.8 * scaleFactor;
-        // const splash1Height = 146.1 * scaleFactor;
-        // // Position splash at the far right, ensuring it's visible
-        // const splash1X = Math.min(
-        //     splash3X + splash3Width * 0.4,
-        //     this.canvas.width - splash1Width
-        // );
-        // const splash1Y = boatBottomY - splash1Height * 0.1;
-        // const splash1 = new Splash(
-        //     splash1X,
-        //     splash1Y,
-        //     splash1Width,
-        //     splash1Height,
-        //     4 // Slow animation
-        // );
-        // await splash1.loadAnimations(this.splashJsonPath, "_1");
-        // this.splashes.push(splash1);
-
-        console.log("Splash positions:", {
-            boatX,
-            boatY,
-            boatWidth,
-            boatHeight,
-            sideLookX,
-            sideLookRightEdge,
-            splash4X,
-            splash4Y,
-            splash2X,
-            splash2Y,
-            splash3X,
-            splash3Y,
-            splash1X,
-            splash1Y,
-        });
     }
 
     async createClouds() {
@@ -415,48 +305,23 @@ class Game {
 
     async loadBackgroundImage() {
         try {
-            console.log("Loading background image...");
             const response = await fetch("assets/lost_at_sea/background.json");
             if (!response.ok) {
                 throw new Error("Failed to load background data");
             }
 
             const backgroundData = await response.json();
-            console.log("Background data loaded:", backgroundData);
 
             if (backgroundData.background_image) {
                 this.backgroundImage = new Image();
                 this.backgroundImage.src = backgroundData.background_image;
-                console.log(
-                    "Background image path set to:",
-                    this.backgroundImage.src
-                );
-
-                // Add an onload handler to confirm when the image is loaded
-                this.backgroundImage.onload = () => {
-                    console.log(
-                        "Background image loaded successfully, dimensions:",
-                        this.backgroundImage.width,
-                        "x",
-                        this.backgroundImage.height
-                    );
-                };
-
-                // Add an onerror handler to detect loading failures
-                this.backgroundImage.onerror = () => {
-                    console.error(
-                        "Failed to load background image from path:",
-                        this.backgroundImage.src
-                    );
-                };
             }
         } catch (error) {
-            console.error("Error loading background image:", error);
+            // Error handling
         }
     }
 
     createPlayer(characterType = "rogue") {
-        console.log("Creating player of type:", characterType);
         let player;
 
         switch (characterType.toLowerCase()) {
@@ -465,15 +330,6 @@ class Game {
                 player.x = (this.canvas.width - player.width) / 2;
                 player.y = this.canvas.height - player.height - 50;
                 this.player = player;
-                console.log(
-                    "Paladin created at position:",
-                    player.x,
-                    player.y,
-                    "with dimensions:",
-                    player.width,
-                    "x",
-                    player.height
-                );
                 break;
 
             case "rogue":
@@ -481,15 +337,6 @@ class Game {
                 player.x = (this.canvas.width - player.width) / 2;
                 player.y = this.canvas.height - player.height - 50;
                 this.player = player;
-                console.log(
-                    "Rogue created at position:",
-                    player.x,
-                    player.y,
-                    "with dimensions:",
-                    player.width,
-                    "x",
-                    player.height
-                );
                 break;
 
             case "mage":
@@ -497,15 +344,6 @@ class Game {
                 player.x = (this.canvas.width - player.width) / 2;
                 player.y = this.canvas.height - player.height - 50;
                 this.player = player;
-                console.log(
-                    "Mage created at position:",
-                    player.x,
-                    player.y,
-                    "with dimensions:",
-                    player.width,
-                    "x",
-                    player.height
-                );
                 break;
 
             default:
@@ -513,19 +351,9 @@ class Game {
                 player.x = (this.canvas.width - player.width) / 2;
                 player.y = this.canvas.height - player.height - 50;
                 this.player = player;
-                console.log(
-                    "Default Rogue created at position:",
-                    player.x,
-                    player.y,
-                    "with dimensions:",
-                    player.width,
-                    "x",
-                    player.height
-                );
                 break;
         }
 
-        // Adjust player position based on current boat variant
         this.adjustPlayerPosition();
     }
 
@@ -543,15 +371,20 @@ class Game {
         this.player.y =
             this.boat.y - this.player.height + this.boat.height * 0.8;
 
-        console.log("Adjusted player position:", {
-            x: this.player.x,
-            y: this.player.y,
-            boatX: this.boat.x,
-            boatY: this.boat.y,
-            playerGroundX: playerGroundX,
-            playerHeight: this.player.height,
-            boatHeight: this.boat.height,
-        });
+        if (!this.playerBoundaries.set) {
+            const leftMargin = playerBoatWidth * 0.15;
+            const rightMargin = playerBoatWidth * -0.02;
+            const minX = playerGroundX + leftMargin;
+            const maxX = playerGroundX + playerBoatWidth - rightMargin;
+
+            this.playerBoundaries.minX = minX;
+            this.playerBoundaries.maxX = maxX;
+            this.playerBoundaries.set = true;
+
+            if (this.player.setMovementBoundaries) {
+                this.player.setMovementBoundaries(minX, maxX);
+            }
+        }
     }
 
     start() {
@@ -561,32 +394,20 @@ class Game {
     handleKeyDown(e) {
         this.keys[e.key] = true;
 
-        // Reset splash animations when 'R' key is pressed
         if (e.key === "r" || e.key === "R") {
             for (const splash of this.splashes) {
                 splash.reset();
             }
         }
 
-        // Switch boat variants when 'B' key is pressed
         if (e.key === "b" || e.key === "B") {
             if (this.boat) {
-                // Toggle between side_look and player_ground
                 const newVariant =
                     this.boat.currentVariant === "side_look"
                         ? "player_ground"
                         : "side_look";
 
-                console.log("Attempting to switch to variant:", newVariant);
-                console.log("Current loaded status:", this.boat.loaded);
-
-                // Force load the variant if not loaded yet
                 if (!this.boat.loaded[newVariant]) {
-                    console.log(
-                        `Variant ${newVariant} not loaded yet, forcing load...`
-                    );
-
-                    // Create and load the image directly
                     if (
                         newVariant === "player_ground" &&
                         !this.boat.sprites.player_ground
@@ -595,9 +416,6 @@ class Game {
                         this.boat.sprites.player_ground.src =
                             "./assets/lost_at_sea/boat/boat_player_ground.svg";
                         this.boat.sprites.player_ground.onload = () => {
-                            console.log(
-                                "Player ground boat image loaded successfully"
-                            );
                             this.boat.loaded.player_ground = true;
                             this.boat.setVariant("player_ground");
                             this.adjustPlayerPosition();
@@ -606,19 +424,13 @@ class Game {
                 }
 
                 if (this.boat.setVariant(newVariant)) {
-                    console.log(`Switched to boat variant: ${newVariant}`);
-
-                    // Reset boat physics when switching variants
                     if (newVariant === "side_look") {
-                        // Reset to original floating position
                         this.boat.y = this.boat.originalY;
                         this.boat.velocityY = 0;
                     } else {
-                        // Start falling from current position
                         this.boat.velocityY = 0;
                     }
 
-                    // Adjust player position if present
                     if (this.player) {
                         this.adjustPlayerPosition();
                     }
@@ -650,15 +462,20 @@ class Game {
     }
 
     update() {
-        // Update boat first since player position depends on it
         if (this.boat) {
             this.boat.update();
         }
 
         if (this.player) {
-            // Adjust player position to follow the boat
-            if (this.boat) {
+            if (this.boat && !this.playerBoundaries.set) {
                 this.adjustPlayerPosition();
+            } else {
+                if (this.boat && this.boat.isFloating) {
+                    this.player.y =
+                        this.boat.y -
+                        this.player.height +
+                        this.boat.height * 0.82;
+                }
             }
 
             this.player.update();
@@ -733,21 +550,24 @@ class Game {
             wave.render(this.ctx);
         }
 
-        if (this.boat) {
-            this.boat.render(this.ctx);
+        if (this.boat && this.boat.loaded.player_ground) {
+            this.boat.renderPlayerGround(this.ctx);
         }
 
-        // Render splashes right after the boat
-        for (const splash of this.splashes) {
-            splash.render(this.ctx);
+        if (this.player) {
+            this.player.render(this.ctx);
+        }
+
+        if (this.boat && this.boat.loaded.side_look) {
+            this.boat.renderSideLook(this.ctx);
         }
 
         for (const wave of this.frontWaves) {
             wave.render(this.ctx);
         }
 
-        if (this.player) {
-            this.player.render(this.ctx);
+        for (const splash of this.splashes) {
+            splash.render(this.ctx);
         }
     }
 

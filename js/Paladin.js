@@ -10,6 +10,10 @@ class Paladin extends Player {
         this.characterFolder = "Paladin";
         this.jsonPath = "assets/player/paladin.json";
 
+        // Paladin-specific hitbox adjustments
+        this.effectiveWidthRatio = 0.3; // Reduced effective width
+        this.effectiveWidthOffset = 0.1; // Centered offset (calculated as (1 - ratio) / 2)
+
         this.loadAnimations(this.jsonPath, this.characterFolder);
     }
     moveLeft() {

@@ -8,6 +8,13 @@ class Player {
         this.velocityX = 0;
         this.velocityY = 0;
 
+        this.minX = 0;
+        this.maxX = 0;
+        this.boundariesSet = false;
+
+        this.effectiveWidthRatio = 0.3;
+        this.effectiveWidthOffset = 0.35;
+
         this.animations = {};
         this.currentAnimation = "ready";
         this.currentFrameIndex = 0;
@@ -23,9 +30,6 @@ class Player {
 
     async loadAnimations(jsonPath, characterFolder) {
         try {
-            console.log(
-                `Loading animations from ${jsonPath} for ${characterFolder}`
-            );
             const response = await fetch(jsonPath);
             if (!response.ok) {
                 throw new Error(
@@ -34,7 +38,6 @@ class Player {
             }
 
             this.animations = await response.json();
-            console.log("Animation data loaded:", this.animations);
 
             for (const animName in this.animations) {
                 const anim = this.animations[animName];
@@ -101,7 +104,7 @@ class Player {
 
             this.setAnimation("ready", characterFolder);
         } catch (error) {
-            console.error("Error loading animations:", error);
+            // Error handling
         }
     }
 
@@ -114,13 +117,46 @@ class Player {
     }
 
     update() {
-        this.x += this.velocityX;
-        this.y += this.velocityY;
+        const newX = this.x + this.velocityX;
+        const effectiveWidth = this.width * this.effectiveWidthRatio;
+
+        if (this.boundariesSet) {
+            const newSpriteCenter = newX + this.width / 2;
+            const newHitboxLeft = newSpriteCenter - effectiveWidth / 2;
+            const newHitboxRight = newSpriteCenter + effectiveWidth / 2;
+
+            if (newHitboxLeft >= this.minX && newHitboxRight <= this.maxX) {
+                this.x = newX;
+            } else if (newHitboxLeft < this.minX) {
+                const adjustment = this.minX - newHitboxLeft;
+                this.x = newX + adjustment;
+            } else if (newHitboxRight > this.maxX) {
+                const adjustment = newHitboxRight - this.maxX;
+                this.x = newX - adjustment;
+            }
+        } else {
+            this.x = newX;
+        }
 
         this.frameCount++;
         if (this.frameCount >= this.frameDelay) {
             this.frameCount = 0;
             this.updateAnimationFrame();
+        }
+    }
+
+    setMovementBoundaries(minX, maxX) {
+        this.minX = minX;
+        this.maxX = maxX;
+        this.boundariesSet = true;
+
+        const movementRange = maxX - minX - this.width;
+        if (movementRange < 100) {
+            this.speed = 2.5;
+        } else if (movementRange < 200) {
+            this.speed = 3.0;
+        } else {
+            this.speed = 3.5;
         }
     }
 
@@ -187,18 +223,44 @@ class Player {
         }
     }
 
+    renderShadow(ctx) {
+        const shadowWidth = this.width * this.effectiveWidthRatio * 0.6;
+        const shadowHeight = shadowWidth * 0.25;
+
+        let shadowX;
+
+        if (this.direction === "left") {
+            shadowX = this.x + this.width * 0.55;
+        } else {
+            shadowX = this.x + this.width / 2.2;
+        }
+
+        const shadowY = this.y + this.height * 0.83;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.ellipse(
+            shadowX,
+            shadowY,
+            shadowWidth / 2,
+            shadowHeight / 2,
+            0,
+            0,
+            Math.PI * 2
+        );
+        ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+        ctx.fill();
+        ctx.restore();
+    }
+
     render(ctx) {
         if (this.currentFrames.length === 0) {
-            console.log("No frames to render for player");
             return;
         }
 
         const framePath = this.currentFrames[this.currentFrameIndex];
-        console.log(
-            `Rendering player frame: ${framePath}, index: ${
-                this.currentFrameIndex
-            }/${this.currentFrames.length - 1}`
-        );
+
+        this.renderShadow(ctx);
 
         const sprite = this.sprites[framePath];
         if (sprite && sprite.complete) {
@@ -216,12 +278,6 @@ class Player {
             } else {
                 ctx.drawImage(sprite, this.x, this.y, this.width, this.height);
             }
-        } else {
-            console.log(
-                `Sprite not ready: ${framePath}, loaded: ${
-                    sprite ? true : false
-                }, complete: ${sprite ? sprite.complete : false}`
-            );
         }
     }
 
@@ -258,13 +314,9 @@ class Player {
         this.direction = "right";
     }
 
-    moveUp() {
-        this.velocityY = -this.speed;
-    }
+    moveUp() {}
 
-    moveDown() {
-        this.velocityY = this.speed;
-    }
+    moveDown() {}
 
     stopX() {
         this.velocityX = 0;

@@ -151,7 +151,13 @@ class Boat {
     }
 
     render(ctx) {
-        // Render player_ground variant
+        // Render both variants (this method is kept for backward compatibility)
+        this.renderPlayerGround(ctx);
+        this.renderSideLook(ctx);
+    }
+
+    // Render only the player_ground variant
+    renderPlayerGround(ctx) {
         if (
             this.loaded.player_ground &&
             this.sprites.player_ground &&
@@ -171,8 +177,10 @@ class Boat {
                 variantHeight
             );
         }
+    }
 
-        // Render side_look variant
+    // Render only the side_look variant
+    renderSideLook(ctx) {
         if (
             this.loaded.side_look &&
             this.sprites.side_look &&
