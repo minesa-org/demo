@@ -26,5 +26,19 @@
             "../Mage/413.svg",
             "../Mage/428.svg"
         ]
+    },
+    "jump": {
+        "start": [
+            "../Mage/550.svg",
+            "../Mage/556.svg"
+        ],
+        "loop": [
+            "../Mage/557.svg",
+            "../Mage/581.svg"
+        ],
+        "end": [
+            "../Mage/582.svg",
+            "../Mage/597.svg"
+        ]
     }
 }

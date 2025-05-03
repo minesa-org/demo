@@ -27,5 +27,20 @@
             "../Rogue/583.svg",
             "../Rogue/595.svg"
         ]
+    },
+    "jump": {
+        "name": "Jump",
+        "start": [
+            "../Rogue/597.svg",
+            "../Rogue/604.svg"
+        ],
+        "loop": [
+            "../Rogue/605.svg",
+            "../Rogue/628.svg"
+        ],
+        "end": [
+            "../Rogue/629.svg",
+            "../Rogue/644.svg"
+        ]
     }
 }

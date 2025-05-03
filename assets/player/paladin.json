@@ -26,5 +26,19 @@
             "../Paladin/214.svg",
             "../Paladin/230.svg"
         ]
+    },
+    "jump": {
+        "start": [
+            "../Paladin/299.svg",
+            "../Paladin/305.svg"
+        ],
+        "loop": [
+            "../Paladin/306.svg",
+            "../Paladin/330.svg"
+        ],
+        "end": [
+            "../Paladin/331.svg",
+            "../Paladin/349.svg"
+        ]
     }
 }
