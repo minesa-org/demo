@@ -40,5 +40,135 @@
             "../Paladin/331.svg",
             "../Paladin/349.svg"
         ]
+    },
+    "melee": {
+        "first": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Paladin/804.svg",
+                "../Paladin/819.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "second": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Paladin/826.svg",
+                "../Paladin/840.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "third": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Paladin/848.svg",
+                "../Paladin/863.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        }
+    },
+    "smite_3": {
+        "start": [
+            "../Paladin/1082.svg",
+            "../Paladin/1116.svg"
+        ],
+        "loop": [
+            "../Paladin/1117.svg",
+            null
+        ],
+        "end": [
+            "../Paladin/1118.svg",
+            "../Paladin/1119.svg"
+        ]
+    },
+    "ranged": {
+        "default": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Paladin/1297.svg",
+                "../Paladin/1305.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "up_45": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Paladin/1308.svg",
+                "../Paladin/1316.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "up_90": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Paladin/1319.svg",
+                "../Paladin/1327.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "down_45": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Paladin/1330.svg",
+                "../Paladin/1338.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "down_90": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Paladin/1341.svg",
+                "../Paladin/1349.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        }
     }
 }

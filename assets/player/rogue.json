@@ -14,7 +14,6 @@
         ]
     },
     "run": {
-        "name": "Run",
         "start": [
             "../Rogue/559.svg",
             "../Rogue/566.svg"
@@ -29,7 +28,6 @@
         ]
     },
     "jump": {
-        "name": "Jump",
         "start": [
             "../Rogue/597.svg",
             "../Rogue/604.svg"
@@ -42,5 +40,121 @@
             "../Rogue/629.svg",
             "../Rogue/644.svg"
         ]
+    },
+    "melee": {
+        "first": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Rogue/933.svg",
+                "../Rogue/949.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "second": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Rogue/951.svg",
+                "../Rogue/967.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "third": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Rogue/968.svg",
+                "../Rogue/983.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        }
+    },
+    "ranged": {
+        "default": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Rogue/986.svg",
+                "../Rogue/995.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "up45": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Rogue/1010.svg",
+                "../Rogue/1019.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "up90": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Rogue/1022.svg",
+                "../Rogue/1031.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "down45": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Rogue/1034.svg",
+                "../Rogue/1043.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "down90": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Rogue/1046.svg",
+                "../Rogue/1055.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        }
     }
 }

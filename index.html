@@ -10,41 +10,8 @@
         <link
             rel="stylesheet"
             href="style.css" />
-        <style>
-            #audioControls {
-                position: fixed;
-                top: 10px;
-                right: 10px;
-                z-index: 1000;
-                background-color: rgba(0, 0, 0, 0.5);
-                padding: 5px;
-                border-radius: 5px;
-                display: flex;
-                align-items: center;
-            }
-            #audioControls button {
-                background: none;
-                border: none;
-                color: white;
-                font-size: 24px;
-                cursor: pointer;
-                margin: 0 5px;
-            }
-            #audioControls button:hover {
-                color: #4caf50;
-            }
-            .hidden {
-                display: none !important;
-            }
-        </style>
     </head>
     <body>
-        <div class="edge-hud">
-            <img
-                src="assets/edge_hud.svg"
-                alt="Game HUD Frame" />
-        </div>
-
         <div class="game-container">
             <canvas
                 id="gameCanvas"
