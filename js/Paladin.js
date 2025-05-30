@@ -14,10 +14,16 @@ class Paladin extends Player {
         this.effectiveWidthRatio = this.calculateEffectiveWidthRatio(95.95);
         this.effectiveWidthOffset = 0.1;
 
+        // Set effective height ratio for better attack detection
+        this.effectiveHeightRatio = 0.3;
+
         // Add smite skill properties
         this.isUsingSmite = false;
         this.smiteCooldown = 0;
         this.smiteMaxCooldown = 120; // 2 seconds at 60 FPS
+
+        // Add basic attack cooldown property - SPECIFIC TO PALADIN
+        this.basicAttackCooldownMax = 40; // Set to a higher value (e.g., 40, 50) for slower basic attacks. Original was effectively 20 frames.
 
         this.loadAnimations(this.jsonPath, this.characterFolder);
     }
@@ -72,7 +78,8 @@ class Paladin extends Player {
     meleeAttack() {
         // Don't allow melee attacks while smite is active
         if (this.isUsingSmite) {
-            return false;
+            console.log("Smite active, cannot basic attack.");
+            return { success: false, isRanged: false }; // Indicate failure
         }
 
         // Call the parent method to handle the basic attack logic
@@ -94,6 +101,7 @@ class Paladin extends Player {
                 // Reset isUsingSmite flag when cooldown ends
                 // This ensures the skill can be used again
                 this.isUsingSmite = false;
+                +console.log("Smite cooldown finished.");
             }
         }
     }
@@ -102,6 +110,9 @@ class Paladin extends Player {
     useSmite() {
         // Don't allow using smite while jumping, attacking, or on cooldown
         if (this.isJumping || this.isAttacking || this.smiteCooldown > 0) {
+            +console.log(
+                "Cannot use Smite: jumping, attacking, or on cooldown."
+            );
             return false;
         }
 
@@ -118,6 +129,9 @@ class Paladin extends Player {
             if (!anim || !anim.start || !anim.start[0] || !anim.start[1]) {
                 // If animation doesn't exist or is invalid, reset to ready state
                 this.isUsingSmite = false;
+                +console.error(
+                    "Smite animation sequence 'start' is invalid or missing."
+                );
                 return false;
             }
 
@@ -131,12 +145,14 @@ class Paladin extends Player {
             this.frameCount = 0;
 
             // Set cooldown - 120 frames (2 seconds)
-            this.smiteCooldown = 60;
+            this.smiteCooldown = 60; // Note: The comment says 120, but the code sets 60. Let's use 60 for now.
 
+            +console.log("Smite skill used.");
             return true; // Return true to indicate skill was successfully used
         } catch (e) {
             // If any error occurs, reset to ready state
             this.isUsingSmite = false;
+            +console.error("Error using Smite skill:", e);
             return false;
         }
     }
@@ -155,6 +171,7 @@ class Paladin extends Player {
                     this.state = "looping";
                     this.loadAnimationSequence("loop");
                     this.currentFrameIndex = 0;
+                    +console.log("Smite animation: starting -> looping");
                 } else if (this.state === "looping") {
                     // Check if loop sequence has a valid end frame
                     const anim = this.animations["smite_3"];
@@ -163,23 +180,28 @@ class Paladin extends Player {
                         this.state = "ending";
                         this.loadAnimationSequence("end");
                         this.currentFrameIndex = 0;
+                        +console.log("Smite animation: looping -> ending");
                     } else {
                         // No valid end sequence, go directly to ready
                         // Clear the isUsingSmite flag to allow basic attacks again
                         this.isUsingSmite = false;
-                        this.state = "looping";
-                        this.currentAnimation = "ready";
-                        this.loadAnimationSequence("loop");
+                        this.state = "looping"; // Still keep state as looping as we just exit
+                        this.currentAnimation = "ready"; // Go back to ready animation
+                        this.loadAnimationSequence("loop"); // Load ready loop animation
                         this.currentFrameIndex = 0;
+                        +console.log(
+                            "Smite animation: looping -> ready (no end sequence)"
+                        );
                     }
                 } else if (this.state === "ending") {
                     // Transition from end to ready
                     // Clear the isUsingSmite flag to allow basic attacks again
                     this.isUsingSmite = false;
-                    this.state = "looping";
-                    this.currentAnimation = "ready";
-                    this.loadAnimationSequence("loop");
+                    this.state = "looping"; // Still keep state as looping as we just exit
+                    this.currentAnimation = "ready"; // Go back to ready animation
+                    this.loadAnimationSequence("loop"); // Load ready loop animation
                     this.currentFrameIndex = 0;
+                    +console.log("Smite animation: ending -> ready");
                 }
             } else {
                 // For other animations, use the parent method

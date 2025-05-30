@@ -68,10 +68,17 @@ class Projectile {
         } else {
             // Default to rogue
             animationPath = "assets/projectiles/rogue/";
+            this.width = 22.75;
+            this.height = 96.75;
         }
 
-        // Load the animation frames
-        const numFrames = 12; // Assuming all animations have 12 frames
+        // Paladin has 18, mage has 12 and rogue has 28 frames
+        const numFrames =
+            this.characterType === "rogue"
+                ? 28
+                : this.characterType === "paladin"
+                ? 18
+                : 12;
         for (let i = 1; i <= numFrames; i++) {
             const framePath = `${animationPath}${i}.svg`;
             this.frames.push(framePath);

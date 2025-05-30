@@ -16,6 +16,9 @@ class Player {
         this.effectiveWidthRatio = 0.3;
         this.effectiveWidthOffset = 0.35;
 
+        // Default effective height ratio - will be overridden in child classes
+        this.effectiveHeightRatio = 0.3;
+
         this.animations = {};
         this.currentAnimation = "ready";
         this.currentFrameIndex = 0;
@@ -53,6 +56,11 @@ class Player {
         this.rangedAttackAngle = 0;
         this.mouseX = 0;
         this.mouseY = 0;
+
+        // Basic attack cooldown properties
+        this.currentAttackCooldown = 0;
+        // Default max cooldown (can be overridden in child classes like Paladin)
+        this.basicAttackCooldownMax = 20; // Frames between attacks (20 frames at 60 FPS = 0.33 seconds)
     }
 
     async loadAnimations(jsonPath, characterFolder) {
@@ -158,6 +166,11 @@ class Player {
             }
         } else {
             this.x = newX;
+        }
+
+        // Decrement basic attack cooldown
+        if (this.currentAttackCooldown > 0) {
+            this.currentAttackCooldown--;
         }
 
         // Handle jumping
@@ -561,6 +574,135 @@ class Player {
         return desiredEffectiveWidth / this.width;
     }
 
+    // Calculate effective height ratio based on desired effective height
+    calculateEffectiveHeightRatio(desiredEffectiveHeight) {
+        return desiredEffectiveHeight / this.height;
+    }
+
+    // Calculate fire socket position based on character type and aim direction
+    calculateFireSocketPosition(angle) {
+        const centerX = this.x + this.width / 2;
+        const centerY = this.y + this.height / 2;
+
+        // Determine aim type based on angle
+        const angleDegrees = angle * (180 / Math.PI);
+        let aimType = "default";
+
+        if (angleDegrees > -110 && angleDegrees < -70) {
+            aimType = "up_90";
+        } else if (angleDegrees > 70 && angleDegrees < 110) {
+            aimType = "down_90";
+        } else if (angleDegrees > -70 && angleDegrees < -20) {
+            aimType = "up_45";
+        } else if (angleDegrees > 20 && angleDegrees < 70) {
+            aimType = "down_45";
+        }
+
+        // Start with center position
+        let fireSocketX = centerX;
+        let fireSocketY = centerY;
+
+        // Determine direction multiplier
+        const directionMultiplier = this.direction === "right" ? 1 : -1;
+
+        // Character-specific offsets
+        const characterType = this.constructor.name.toLowerCase();
+        let heightOffsetRatio = 0.2;
+        let widthOffsetRatio = 0.25;
+
+        if (characterType === "mage") {
+            heightOffsetRatio = 0.22;
+            widthOffsetRatio = 0.28;
+        } else if (characterType === "paladin") {
+            heightOffsetRatio = 0.18;
+            widthOffsetRatio = 0.22;
+        } else if (characterType === "rogue") {
+            heightOffsetRatio = 0.2;
+            widthOffsetRatio = 0.25;
+        }
+
+        const heightOffset = this.height * heightOffsetRatio;
+        const widthOffset = this.width * widthOffsetRatio;
+
+        // Apply character-specific positioning
+        if (characterType === "paladin") {
+            switch (aimType) {
+                case "up_90":
+                    fireSocketY = centerY - heightOffset * -0.1;
+                    break;
+                case "up_45":
+                    fireSocketX =
+                        centerX + widthOffset * directionMultiplier * 0.8;
+                    fireSocketY = centerY - heightOffset * -0.5;
+                    break;
+                case "default":
+                    fireSocketX =
+                        centerX + widthOffset * directionMultiplier * 0.8;
+                    fireSocketY = centerY - heightOffset * -0.8;
+                    break;
+                case "down_45":
+                    fireSocketX =
+                        centerX + widthOffset * directionMultiplier * 0.6;
+                    fireSocketY = centerY + heightOffset * -0.2;
+                    break;
+                case "down_90":
+                    fireSocketY = centerY + heightOffset * 0.8;
+                    break;
+            }
+        } else if (characterType === "mage") {
+            switch (aimType) {
+                case "up_90":
+                    fireSocketY = centerY - heightOffset * 1.2;
+                    break;
+                case "up_45":
+                    fireSocketX =
+                        centerX + widthOffset * directionMultiplier * 0.9;
+                    fireSocketY = centerY - heightOffset * 0.8;
+                    break;
+                case "default":
+                    fireSocketX =
+                        centerX + widthOffset * directionMultiplier * 1.1;
+                    fireSocketY = centerY - heightOffset * 0.2;
+                    break;
+                case "down_45":
+                    fireSocketX =
+                        centerX + widthOffset * directionMultiplier * 0.7;
+                    fireSocketY = centerY + heightOffset * 0.4;
+                    break;
+                case "down_90":
+                    fireSocketY = centerY + heightOffset * 1.4;
+                    break;
+            }
+        } else {
+            // Rogue
+            switch (aimType) {
+                case "up_90":
+                    fireSocketY = centerY - heightOffset * 1.0;
+                    break;
+                case "up_45":
+                    fireSocketX =
+                        centerX + widthOffset * directionMultiplier * 1.0;
+                    fireSocketY = centerY - heightOffset * 0.6;
+                    break;
+                case "default":
+                    fireSocketX =
+                        centerX + widthOffset * directionMultiplier * 1.2;
+                    fireSocketY = centerY;
+                    break;
+                case "down_45":
+                    fireSocketX =
+                        centerX + widthOffset * directionMultiplier * 0.8;
+                    fireSocketY = centerY + heightOffset * 0.6;
+                    break;
+                case "down_90":
+                    fireSocketY = centerY + heightOffset * 1.2;
+                    break;
+            }
+        }
+
+        return { x: fireSocketX, y: fireSocketY, aimType };
+    }
+
     renderHitbox(ctx) {
         // Draw the full sprite box
         ctx.save();
@@ -568,12 +710,17 @@ class Player {
         ctx.lineWidth = 2;
         ctx.strokeRect(this.x, this.y, this.width, this.height);
 
-        // Draw the effective hitbox (used for collision detection)
+        // Draw the effective hitbox (used for collision detection and attack detection)
         const effectiveWidth = this.width * this.effectiveWidthRatio;
+        const effectiveHeight = this.height * this.effectiveHeightRatio;
         const hitboxX = this.x + (this.width - effectiveWidth) / 2;
+        // Position the effective height box lower to match character's body/feet area
+        const verticalOffset = this.height * 0.25; // Move down by 15% of character height
+        const hitboxY =
+            this.y + (this.height - effectiveHeight) / 2 + verticalOffset;
 
         ctx.strokeStyle = "rgba(0, 255, 0, 0.8)";
-        ctx.strokeRect(hitboxX, this.y, effectiveWidth, this.height);
+        ctx.strokeRect(hitboxX, hitboxY, effectiveWidth, effectiveHeight);
 
         // Draw character class and dimensions text
         ctx.fillStyle = "white";
@@ -587,9 +734,19 @@ class Player {
             this.y + 20
         );
         ctx.fillText(
-            `Ratio: ${this.effectiveWidthRatio.toFixed(4)}`,
+            `Effective Height: ${effectiveHeight.toFixed(2)}`,
             this.x,
             this.y + 35
+        );
+        ctx.fillText(
+            `W Ratio: ${this.effectiveWidthRatio.toFixed(4)}`,
+            this.x,
+            this.y + 50
+        );
+        ctx.fillText(
+            `H Ratio: ${this.effectiveHeightRatio.toFixed(4)}`,
+            this.x,
+            this.y + 65
         );
 
         // Remove the aim direction visualization code
@@ -598,24 +755,12 @@ class Player {
     }
 
     renderAimDirection(ctx) {
-        // Calculate the center of the character
-        const centerX = this.x + this.width / 2;
-        const centerY = this.y + this.height / 2;
-
-        // Calculate fire socket position (slightly offset from center based on character type)
-        // Position the fire socket at hand/weapon height
-        const fireSocketOffsetY = -this.height * 0.05; // 5% up from center (much lower than before)
-        let fireSocketOffsetX = 0;
-
-        // Adjust X offset based on direction
-        if (this.direction === "right") {
-            fireSocketOffsetX = this.width * 0.3; // 30% to the right from center
-        } else {
-            fireSocketOffsetX = -this.width * 0.3; // 30% to the left from center
-        }
-
-        const fireSocketX = centerX + fireSocketOffsetX;
-        const fireSocketY = centerY + fireSocketOffsetY;
+        // Use the unified fire socket calculation
+        const fireSocketInfo = this.calculateFireSocketPosition(
+            this.rangedAttackAngle
+        );
+        const fireSocketX = fireSocketInfo.x;
+        const fireSocketY = fireSocketInfo.y;
 
         // Draw fire socket
         ctx.beginPath();
@@ -648,29 +793,8 @@ class Player {
         ctx.font = "14px Arial";
         ctx.fillText(`Angle: ${angleDegrees}°`, endX + 5, endY);
 
-        // Draw aim type text
-        let aimType = "default";
-        const angle = this.rangedAttackAngle * (180 / Math.PI);
-
-        // Fixed angle-to-animation mapping (same as in performRangedAttack)
-        // First, handle the vertical cases
-        if (angle > -110 && angle < -70) {
-            aimType = "up_90"; // Shooting straight up
-        } else if (angle > 70 && angle < 110) {
-            aimType = "down_90"; // Shooting straight down
-        }
-        // Then handle the diagonal cases
-        else if (angle >= -70 && angle < -20) {
-            aimType = "up_45"; // Shooting up at 45 degrees
-        } else if (angle >= -20 && angle <= 20) {
-            aimType = "default"; // Shooting straight left/right
-        } else if (angle > 20 && angle <= 70) {
-            aimType = "down_45"; // Shooting down at 45 degrees
-        } else if (angle > 110 && angle <= 160) {
-            aimType = "down_45"; // Shooting down at 45 degrees (other side)
-        } else if (angle > 160 || angle <= -110) {
-            aimType = "default"; // Shooting straight left/right (other side)
-        }
+        // Use the aim type from fire socket calculation
+        const aimType = fireSocketInfo.aimType;
 
         ctx.fillText(`Aim Type: ${aimType}`, endX + 5, endY + 20);
 
@@ -718,8 +842,10 @@ class Player {
                 this.renderHitbox(ctx);
             }
 
-            // Remove the aim visualization code
-            // No longer need to check for window.showAimDebug
+            // Draw aim visualization if enabled
+            if (window.showAimDebug) {
+                this.renderAimDirection(ctx);
+            }
 
             // Get the sprite for the current frame
             const sprite = this.sprites[framePath];
@@ -896,31 +1022,53 @@ class Player {
         console.log(`Attack called with mouse at (${mouseX}, ${mouseY})`);
 
         // Don't allow attacking while jumping or already attacking
-        if (this.isJumping || this.isAttacking) {
+        // Also check if the basic attack is on cooldown
+        if (
+            this.isJumping ||
+            this.isAttacking ||
+            this.currentAttackCooldown > 0
+        ) {
             console.log(
-                "Attack blocked: Player is jumping or already attacking"
+                "Attack blocked: Player is jumping, already attacking, or attack is on cooldown"
             );
             return { success: false, isRanged: false };
         }
 
         // Calculate if this should be a melee or ranged attack based on mouse position
         const effectiveWidth = this.width * this.effectiveWidthRatio;
-        const playerCenterX = this.x + this.width / 2;
-        const playerCenterY = this.y + this.height / 2;
+        const effectiveHeight = this.height * this.effectiveHeightRatio;
 
-        // Calculate distance from player center to mouse
-        const dx = mouseX - playerCenterX;
-        const dy = mouseY - playerCenterY;
+        // Use the same positioning as the visual hitbox
+        const hitboxX = this.x + (this.width - effectiveWidth) / 2;
+        const verticalOffset = this.height * 0.15; // Same offset as visual hitbox
+        const hitboxY =
+            this.y + (this.height - effectiveHeight) / 2 + verticalOffset;
+
+        // Calculate center of the effective hitbox (not the sprite center)
+        const effectiveHitboxCenterX = hitboxX + effectiveWidth / 2;
+        const effectiveHitboxCenterY = hitboxY + effectiveHeight / 2;
+
+        // Calculate distance from effective hitbox center to mouse
+        const dx = mouseX - effectiveHitboxCenterX;
+        const dy = mouseY - effectiveHitboxCenterY;
 
         console.log(
-            `Player center: (${playerCenterX}, ${playerCenterY}), dx: ${dx}, dy: ${dy}`
+            `Effective hitbox center: (${effectiveHitboxCenterX}, ${effectiveHitboxCenterY}), dx: ${dx}, dy: ${dy}`
         );
+
         console.log(
             `Effective width: ${effectiveWidth}, half: ${effectiveWidth / 2}`
         );
+        console.log(
+            `Effective height: ${effectiveHeight}, half: ${effectiveHeight / 2}`
+        );
+        const isWithinMeleeRangeX = Math.abs(dx) < effectiveWidth / 2;
+        const isWithinMeleeRangeY = Math.abs(dy) < effectiveHeight / 2;
+        const isWithinMeleeRange = isWithinMeleeRangeX && isWithinMeleeRangeY;
 
-        // Determine if mouse is within the character's effective width
-        const isWithinMeleeRange = Math.abs(dx) < effectiveWidth / 2;
+        console.log(
+            `Melee range X: ${isWithinMeleeRangeX}, Y: ${isWithinMeleeRangeY}`
+        );
 
         // Set the attack type (melee or ranged)
         this.isRangedAttack = !isWithinMeleeRange;
@@ -929,23 +1077,23 @@ class Player {
 
         // If it's a ranged attack, calculate the angle
         if (this.isRangedAttack) {
-            // Calculate fire socket position (same as in renderAimDirection)
-            const fireSocketOffsetY = -this.height * 0.05; // 5% up from center (much lower than before)
-            let fireSocketOffsetX = 0;
-
-            // Adjust X offset based on direction
+            // Set character direction based on mouse position
             if (dx >= 0) {
                 this.direction = "right";
-                fireSocketOffsetX = this.width * 0.3; // 30% to the right from center
             } else {
                 this.direction = "left";
-                fireSocketOffsetX = -this.width * 0.3; // 30% to the left from center
             }
 
-            const fireSocketX = playerCenterX + fireSocketOffsetX;
-            const fireSocketY = playerCenterY + fireSocketOffsetY;
+            // Calculate initial angle from player center to mouse for fire socket calculation
+            const initialAngle = Math.atan2(dy, dx);
 
-            // Calculate angle from fire socket to mouse (more accurate)
+            // Use the unified fire socket calculation
+            const fireSocketInfo =
+                this.calculateFireSocketPosition(initialAngle);
+            const fireSocketX = fireSocketInfo.x;
+            const fireSocketY = fireSocketInfo.y;
+
+            // Calculate final angle from fire socket to mouse (more accurate)
             const socketDx = mouseX - fireSocketX;
             const socketDy = mouseY - fireSocketY;
             this.rangedAttackAngle = Math.atan2(socketDy, socketDx);
@@ -974,6 +1122,14 @@ class Player {
 
     // Method to perform melee attack
     performMeleeAttack() {
+        // Check if attack is on cooldown
+        if (this.isAttacking || this.currentAttackCooldown > 0) {
+            console.log(
+                "Melee Attack blocked: Already attacking or on cooldown"
+            );
+            return { success: false, isRanged: false };
+        }
+
         // Set attacking flag
         this.isAttacking = true;
 
@@ -1014,6 +1170,9 @@ class Player {
             this.currentFrameIndex = 0;
             this.frameCount = 0;
 
+            // Reset the basic attack cooldown
+            this.currentAttackCooldown = this.basicAttackCooldownMax;
+
             return { success: true, isRanged: false }; // Return true to indicate attack was successfully started
         } catch (e) {
             // If any error occurs, reset to ready state
@@ -1028,6 +1187,14 @@ class Player {
     // Method to perform ranged attack
     performRangedAttack() {
         console.log("Performing ranged attack");
+
+        // Check if attack is on cooldown
+        if (this.isAttacking || this.currentAttackCooldown > 0) {
+            console.log(
+                "Ranged Attack blocked: Already attacking or on cooldown"
+            );
+            return { success: false, isRanged: true }; // Return true for isRanged for consistency
+        }
 
         // Set attacking flag
         this.isAttacking = true;
@@ -1141,6 +1308,9 @@ class Player {
             // Reset animation counters
             this.currentFrameIndex = 0;
             this.frameCount = 0;
+
+            // Reset the basic attack cooldown
+            this.currentAttackCooldown = this.basicAttackCooldownMax;
 
             return {
                 success: true,

@@ -14,6 +14,9 @@ class Mage extends Player {
         this.effectiveWidthRatio = this.calculateEffectiveWidthRatio(95.95);
         this.effectiveWidthOffset = 0.375;
 
+        // Set effective height ratio for better attack detection
+        this.effectiveHeightRatio = 0.4;
+
         this.loadAnimations(this.jsonPath, this.characterFolder);
     }
 

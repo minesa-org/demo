@@ -562,23 +562,17 @@ class Game {
     start() {
         // Initialize display flags
         window.showHitboxes = false;
-        // Remove the showAimDebug flag
-        
+        window.showAimDebug = false;
+
         // Add keyboard shortcuts for testing features
         document.addEventListener("keydown", (e) => {
-            // Press 'c' to toggle cursor
-            if (e.key === "c") {
-                this.toggleCursor();
-            }
-            
             // Press 'h' to toggle hitbox display
             if (e.key === "h") {
                 this.toggleHitboxes();
+                this.toggleAimVisualization();
             }
-            
-            // Remove the 'a' key handler for aim visualization
         });
-        
+
         requestAnimationFrame(this.gameLoop.bind(this));
     }
 
@@ -588,7 +582,11 @@ class Game {
         console.log(`Hitboxes ${window.showHitboxes ? "shown" : "hidden"}`);
     }
 
-    // Remove the toggleAimVisualization method
+    // Toggle aim visualization
+    toggleAimVisualization() {
+        window.showAimDebug = !window.showAimDebug;
+        console.log(`Aim debug ${window.showAimDebug ? "shown" : "hidden"}`);
+    }
 
     // Create a projectile for ranged attacks
     createProjectile(angle, attackType) {
@@ -745,17 +743,17 @@ class Game {
         let projectileWidth, projectileHeight, projectileSpeed;
 
         if (characterType === "mage") {
-            projectileWidth = 60;
-            projectileHeight = 60;
+            projectileWidth = 30; // Original: 60
+            projectileHeight = 30; // Original: 60
             projectileSpeed = 7;
         } else if (characterType === "paladin") {
-            projectileWidth = 40;
-            projectileHeight = 100;
+            projectileWidth = 30; // Original: 40
+            projectileHeight = 70; // Original: 100
             projectileSpeed = 5;
         } else {
             // rogue
-            projectileWidth = 30;
-            projectileHeight = 30;
+            projectileWidth = 15; // Original: 30
+            projectileHeight = 15; // Original: 30
             projectileSpeed = 12;
         }
 
@@ -896,45 +894,37 @@ class Game {
         const attackType = this.player.currentAttackType;
         let soundFile;
 
-        // Get the character type to determine which sound files to use
+        // Get the character type
         const characterType = this.player.constructor.name.toLowerCase();
+        const prefix = characterType;
 
-        // Determine the prefix based on character type
-        let prefix;
-        if (characterType === "paladin") {
-            prefix = "paladin";
-        } else if (characterType === "mage") {
-            prefix = "mage";
+        // For ranged attacks, always use _01 since that's all we have
+        if (isRanged) {
+            soundFile = `assets/audio/${prefix}_ranged_01.wav`;
         } else {
-            prefix = "rogue";
+            // For melee attacks, use the proper sequence
+            switch (attackType) {
+                case "first":
+                    soundFile = `assets/audio/${prefix}_melee_01.wav`;
+                    break;
+                case "second":
+                    soundFile = `assets/audio/${prefix}_melee_02.wav`;
+                    break;
+                case "third":
+                    soundFile = `assets/audio/${prefix}_melee_03.wav`;
+                    break;
+                default:
+                    soundFile = `assets/audio/${prefix}_melee_01.wav`;
+            }
         }
 
-        // Select the appropriate sound file based on the attack type and whether it's ranged
-        const attackTypeStr = isRanged ? "ranged" : "melee";
-
-        switch (attackType) {
-            case "first":
-                soundFile = `assets/audio/${prefix}_${attackTypeStr}_01.wav`;
-                break;
-            case "second":
-                soundFile = `assets/audio/${prefix}_${attackTypeStr}_02.wav`;
-                break;
-            case "third":
-                soundFile = `assets/audio/${prefix}_${attackTypeStr}_03.wav`;
-                break;
-            default:
-                soundFile = `assets/audio/${prefix}_${attackTypeStr}_01.wav`;
-        }
-
-        // Create a brand new Audio object each time
+        // Create and play the sound
         const sound = new Audio(soundFile);
         sound.volume = 0.7;
 
-        // Play it immediately
         sound.play().catch(() => {
-            // If ranged sound file doesn't exist, fall back to melee sound
+            // If ranged sound fails, fall back to melee_01
             if (isRanged) {
-                // Try to play the melee sound instead
                 const fallbackSound = new Audio(
                     `assets/audio/${prefix}_melee_01.wav`
                 );

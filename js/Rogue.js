@@ -14,6 +14,9 @@ class Rogue extends Player {
         this.effectiveWidthRatio = this.calculateEffectiveWidthRatio(95.95);
         this.effectiveWidthOffset = 0.35;
 
+        // Set effective height ratio for better attack detection
+        this.effectiveHeightRatio = 0.4;
+
         // Increase movement speed by 1.2x
         this.speed = this.speed * 1.2;
 
