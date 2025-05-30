@@ -7,6 +7,7 @@ import Wave from "./Wave.js";
 import Splash from "./Splash.js";
 import Captain from "./Captain.js";
 import Projectile from "./Projectile.js";
+import Goblin from "./Goblin.js";
 
 class Game {
     constructor() {
@@ -28,6 +29,10 @@ class Game {
         this.splashJsonPath = "assets/lost_at_sea/splash.json";
         this.captain = null;
         this.captainJsonPath = "assets/lost_at_sea/captain.json";
+        this.goblinJsonPath = "assets/enemy/animation_goblin.json";
+
+        // Goblin enemies
+        this.goblins = [];
 
         this.isPlayerMoving = false;
         this.movementSoundPlaying = false;
@@ -77,6 +82,7 @@ class Game {
         await this.createBoat();
         await this.createSplash();
         await this.createCaptain();
+        await this.createGoblins();
 
         setTimeout(() => {
             if (this.boat) {
@@ -243,6 +249,39 @@ class Game {
             await Promise.race([animationPromise, timeoutPromise]);
         } catch (error) {
             console.error("Error creating captain:", error);
+        }
+    }
+
+    async createGoblins() {
+        try {
+            // Create a few goblins at different positions on the boat
+            const goblinPositions = [
+                {
+                    x: this.canvas.width * 0.2,
+                    y: this.canvas.height * 0.6 + 0,
+                }, // Added +0
+                {
+                    x: this.canvas.width * 0.8,
+                    y: this.canvas.height * 0.6 + 0,
+                }, // Added +0
+                {
+                    x: this.canvas.width * 0.5,
+                    y: this.canvas.height * 0.7 + 0,
+                }, // Added +0
+            ];
+
+            for (const pos of goblinPositions) {
+                const goblin = new Goblin(pos.x, pos.y, 120, 120); // Explicitly set size
+
+                // Load goblin animations
+                await goblin.loadAnimations(this.goblinJsonPath);
+
+                this.goblins.push(goblin);
+            }
+
+            console.log(`Created ${this.goblins.length} goblins`);
+        } catch (error) {
+            console.error("Error creating goblins:", error);
         }
     }
 
@@ -509,6 +548,8 @@ class Game {
         gameCanvas.style.cursor = "var(--cursor-custom)";
     }
 
+    // (Removed misplaced goblin update for-loop from class body. Goblin update logic should be inside the update() method, which already exists below.)
+
     adjustPlayerPosition() {
         if (!this.player || !this.boat) return;
 
@@ -571,6 +612,9 @@ class Game {
                 this.toggleHitboxes();
                 this.toggleAimVisualization();
             }
+            if (e.key == "g") {
+                this.toggleGoblinDebug();
+            }
         });
 
         requestAnimationFrame(this.gameLoop.bind(this));
@@ -586,6 +630,13 @@ class Game {
     toggleAimVisualization() {
         window.showAimDebug = !window.showAimDebug;
         console.log(`Aim debug ${window.showAimDebug ? "shown" : "hidden"}`);
+    }
+    // Toggle goblin debug
+    toggleGoblinDebug() {
+        window.showHitboxes = !window.showHitboxes;
+        console.log(
+            `Goblin debug ${window.showHitboxes ? "enabled" : "disabled"}`
+        );
     }
 
     // Create a projectile for ranged attacks
@@ -1161,6 +1212,82 @@ class Game {
                 this.projectiles.splice(i, 1);
             }
         }
+
+        // Update goblins
+        for (let i = this.goblins.length - 1; i >= 0; i--) {
+            const goblin = this.goblins[i];
+            goblin.update(this.player);
+
+            // Remove goblins marked for removal (faded away)
+            if (goblin.shouldRemove) {
+                this.goblins.splice(i, 1);
+                console.log("Goblin removed from game");
+                continue;
+            }
+
+            // Check collision with projectiles
+            for (let j = this.projectiles.length - 1; j >= 0; j--) {
+                const projectile = this.projectiles[j];
+                if (projectile.active && goblin.checkCollision(projectile)) {
+                    // Goblin takes damage
+                    goblin.takeDamage(1);
+
+                    // Remove projectile
+                    this.projectiles.splice(j, 1);
+
+                    console.log(
+                        `Goblin hit by projectile! Health: ${goblin.health}`
+                    );
+                }
+            }
+
+            // Check collision with player melee attacks
+            if (
+                this.player &&
+                this.player.isAttacking &&
+                !this.player.isRangedAttack &&
+                goblin.health > 0
+            ) {
+                // Check if player is in melee range and the attack just started
+                const playerCenterX = this.player.x + this.player.width / 2;
+                const playerCenterY = this.player.y + this.player.height / 2;
+                const goblinCenterX = goblin.x + goblin.width / 2;
+                const goblinCenterY = goblin.y + goblin.height / 2;
+
+                const distance = Math.sqrt(
+                    Math.pow(playerCenterX - goblinCenterX, 2) +
+                        Math.pow(playerCenterY - goblinCenterY, 2)
+                );
+
+                // Check if goblin is in melee range (adjust range as needed)
+                if (distance <= 100) {
+                    // Only damage if this is a new attack (prevent multiple hits per attack)
+                    if (!goblin.hitByCurrentAttack) {
+                        goblin.takeDamage(1);
+                        goblin.hitByCurrentAttack = true;
+
+                        console.log(
+                            `Goblin hit by melee! Health: ${goblin.health}`
+                        );
+
+                        // Reset hit flag when attack ends
+                        setTimeout(() => {
+                            goblin.hitByCurrentAttack = false;
+                        }, 500);
+                    }
+                }
+            }
+
+            // Check if goblin can attack player and apply damage
+            if (goblin.canAttackPlayer(this.player) && goblin.health > 0) {
+                // Here you could implement player taking damage
+                // For now, just log the attack
+                console.log("Goblin attacks player!");
+
+                // You can add player damage logic here:
+                // this.player.takeDamage(1);
+            }
+        }
     }
 
     render() {
@@ -1221,6 +1348,11 @@ class Game {
 
         if (this.player) {
             this.player.render(this.ctx);
+        }
+
+        // Render goblins
+        for (const goblin of this.goblins) {
+            goblin.render(this.ctx);
         }
 
         try {
