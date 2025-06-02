@@ -1,9 +1,13 @@
 class Goblin {
-    constructor(x, y, width = 120, height = 120) {
+    constructor(x, y, width = 194, height = 165) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+
+        // Effective width for collision detection (smaller than visual width)
+        this.effectiveWidthRatio = 0.3; // 30% of visual width // 40% of visual width
+        this.effectiveHeightRatio = 0.45; // 45% of visual height // 60% of visual height
 
         this.maxHealth = 10;
         this.health = this.maxHealth;
@@ -17,7 +21,7 @@ class Goblin {
 
         this.velocityX = 0;
         this.velocityY = 0;
-        this.direction = "right";
+        this.direction = "left"; // Varsayılan yön sol olarak değiştirildi
 
         this.animations = {};
         this.frameCounter = 0;
@@ -33,12 +37,14 @@ class Goblin {
         this.fadeAlpha = 1.0;
         this.fadeSpeed = 0.005;
 
-        this.attackTimer = 0;
-        this.attackCooldown = 120;
+        this.attackDelay = 120; // 2 saniye bekleme (60fps * 2)
+        this.lastAttackTime = 0;
         this.isAttacking = false;
         this.attackDuration = 40;
         this.currentMeleeAttack = 0;
-        this.meleeAttackSequence = ["first", "second", "third", "fourth"];
+        this.meleeAttackSequence = ["first", "second", "third"];
+        this.dieSound = new Audio("assets/audio/goblin_die.wav");
+        this.dieSound.volume = 0.7;
 
         this.targetPlayer = null;
 
@@ -46,6 +52,7 @@ class Goblin {
         this.loadedSprites = new Set();
 
         this.groundY = y;
+        this.initialY = y; // Store initial Y position
     }
 
     async loadAnimations(jsonPath) {
@@ -212,7 +219,14 @@ class Goblin {
         }
 
         this.x += this.velocityX;
-        this.y = this.groundY;
+
+        // Update ground position to match player's bottom height
+        this.updateGroundPosition(player);
+
+        // Saldırı gecikmesini güncelle
+        if (this.lastAttackTime > 0) {
+            this.lastAttackTime--;
+        }
 
         this.updateAnimation();
     }
@@ -232,12 +246,12 @@ class Goblin {
     moveTowardsPlayer(player) {
         const centerX = this.x + this.width / 2;
         const playerCenterX = player.x + player.width / 2;
-
         const dx = playerCenterX - centerX;
 
+        this.direction = dx >= 0 ? "left" : "right"; // Yön mantığı tersine çevrildi
+
         if (Math.abs(dx) > 5) {
-            this.velocityX = dx > 0 ? this.moveSpeed : -this.moveSpeed;
-            this.direction = dx > 0 ? "right" : "left";
+            this.velocityX = this.moveSpeed * Math.sign(dx);
         } else {
             this.velocityX = 0;
         }
@@ -250,7 +264,8 @@ class Goblin {
         this.animationPhase = "loop";
         this.phaseFrameIndex = 0;
 
-        this.currentMeleeAttack = (this.currentMeleeAttack + 1) % 4;
+        // Changed to 3 attacks instead of 4
+        this.currentMeleeAttack = (this.currentMeleeAttack + 1) % 3;
     }
 
     takeDamage(damage = 1) {
@@ -270,24 +285,62 @@ class Goblin {
             this.animationPhase = "start";
             this.phaseFrameIndex = 0;
             this.velocityX = 0;
+            // Play death sound
+            this.dieSound.currentTime = 0;
+            this.dieSound.play().catch(() => {
+                /* Silently handle error */
+            });
         }
 
         return true;
     }
 
-    canAttackPlayer(player) {
-        if (!this.isAttacking || !player) return false;
+    // Check if goblin is in range of player skills (like Paladin's smite)
+    isInSkillRange(player, skillRange = 150) {
+        if (!player) return false;
 
         const distance = this.getDistanceToPlayer(player);
-        return distance <= this.attackRange;
+        return distance <= skillRange;
+    }
+
+    // Update goblin's ground position to match player's bottom height
+    updateGroundPosition() {
+        this.y = this.groundY;
+    }
+
+    canAttackPlayer(player) {
+        if (
+            !this.isAttacking ||
+            !player ||
+            this.isDead ||
+            this.lastAttackTime > 0
+        ) {
+            return false;
+        }
+
+        const distance = this.getDistanceToPlayer(player);
+        if (distance <= this.attackRange) {
+            this.lastAttackTime = this.attackDelay;
+            return true;
+        }
+        return false;
     }
 
     checkCollision(projectile) {
+        // Dead goblins can't be hit
+        if (this.isDead) return false;
+
+        // Use effective width/height for collision detection
+        const effectiveWidth = this.width * this.effectiveWidthRatio;
+        const effectiveHeight = this.height * this.effectiveHeightRatio;
+        const effectiveX = this.x + (this.width - effectiveWidth) / 2;
+        const effectiveY = this.y + (this.height - effectiveHeight) / 2;
+
         return (
-            projectile.x < this.x + this.width &&
-            projectile.x + projectile.width > this.x &&
-            projectile.y < this.y + this.height &&
-            projectile.y + projectile.height > this.y
+            projectile.x < effectiveX + effectiveWidth &&
+            projectile.x + projectile.width > effectiveX &&
+            projectile.y < effectiveY + effectiveHeight &&
+            projectile.y + projectile.height > effectiveY
         );
     }
 
@@ -429,33 +482,52 @@ class Goblin {
             return;
         }
 
-        ctx.save();
-
         if (this.state === "koed" && this.fadeAlpha < 1.0) {
             ctx.globalAlpha = Math.max(0, this.fadeAlpha);
         }
 
-        if (this.direction === "left") {
+        ctx.save();
+        if (this.direction === "right") {
+            // Sağa giderken çevir
             ctx.scale(-1, 1);
             ctx.drawImage(
                 sprite,
-                -(this.x + this.width),
+                -this.x - this.width,
                 this.y,
                 this.width,
                 this.height
             );
         } else {
+            // Sola giderken normal çiz
             ctx.drawImage(sprite, this.x, this.y, this.width, this.height);
         }
-
         ctx.restore();
 
-        if (window.showHitboxes) {
-            ctx.strokeStyle = this.health > 0 ? "green" : "red";
-            ctx.lineWidth = 2;
+        // Only draw hitboxes if the goblin is alive and debug mode is on
+        if (window.showHitboxes && !this.isDead) {
+            // Draw full sprite box
+            ctx.strokeStyle = "blue";
+            ctx.lineWidth = 1;
             ctx.strokeRect(this.x, this.y, this.width, this.height);
 
-            if (this.health > 0) {
+            // Draw effective hitbox
+            const effectiveWidth = this.width * this.effectiveWidthRatio;
+            const effectiveHeight = this.height * this.effectiveHeightRatio;
+            const effectiveX = this.x + (this.width - effectiveWidth) / 2;
+            const effectiveY = this.y + (this.height - effectiveHeight) / 2;
+
+            // Only show hit detection boxes for alive goblins
+            if (!this.isDead) {
+                ctx.strokeStyle = "green";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(
+                    effectiveX,
+                    effectiveY,
+                    effectiveWidth,
+                    effectiveHeight
+                );
+
+                // Show detection and attack ranges
                 ctx.strokeStyle = "yellow";
                 ctx.lineWidth = 1;
                 ctx.beginPath();
@@ -478,21 +550,22 @@ class Goblin {
                     2 * Math.PI
                 );
                 ctx.stroke();
-            }
 
-            ctx.fillStyle = "white";
-            ctx.font = "12px Arial";
-            ctx.fillText(
-                `HP: ${this.health}/${this.maxHealth}`,
-                this.x,
-                this.y - 5
-            );
-            ctx.fillText(`State: ${this.state}`, this.x, this.y - 20);
-            ctx.fillText(
-                `Phase: ${this.animationPhase} (${this.phaseFrameIndex})`,
-                this.x,
-                this.y - 35
-            );
+                // Show debug info only for alive goblins
+                ctx.fillStyle = "white";
+                ctx.font = "12px Arial";
+                ctx.fillText(
+                    `HP: ${this.health}/${this.maxHealth}`,
+                    this.x,
+                    this.y - 5
+                );
+                ctx.fillText(`State: ${this.state}`, this.x, this.y - 20);
+                ctx.fillText(
+                    `Phase: ${this.animationPhase} (${this.phaseFrameIndex})`,
+                    this.x,
+                    this.y - 35
+                );
+            }
         }
     }
 }

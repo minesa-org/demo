@@ -20,7 +20,7 @@ class Paladin extends Player {
         // Add smite skill properties
         this.isUsingSmite = false;
         this.smiteCooldown = 0;
-        this.smiteMaxCooldown = 120; // 2 seconds at 60 FPS
+        this.smiteMaxCooldown = 360; // 6 seconds at 60 FPS
 
         // Add basic attack cooldown property - SPECIFIC TO PALADIN
         this.basicAttackCooldownMax = 40; // Set to a higher value (e.g., 40, 50) for slower basic attacks. Original was effectively 20 frames.
@@ -144,8 +144,8 @@ class Paladin extends Player {
             this.currentFrameIndex = 0;
             this.frameCount = 0;
 
-            // Set cooldown - 120 frames (2 seconds)
-            this.smiteCooldown = 60; // Note: The comment says 120, but the code sets 60. Let's use 60 for now.
+            // Set cooldown - 360 frames (6 seconds)
+            this.smiteCooldown = this.smiteMaxCooldown;
 
             +console.log("Smite skill used.");
             return true; // Return true to indicate skill was successfully used

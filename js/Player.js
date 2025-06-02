@@ -61,6 +61,10 @@ class Player {
         this.currentAttackCooldown = 0;
         // Default max cooldown (can be overridden in child classes like Paladin)
         this.basicAttackCooldownMax = 20; // Frames between attacks (20 frames at 60 FPS = 0.33 seconds)
+
+        // Skill properties
+        this.skillCooldown = 0;
+        this.skillDuration = 60; // 1 saniye (60fps)
     }
 
     async loadAnimations(jsonPath, characterFolder) {
@@ -245,6 +249,11 @@ class Player {
         if (this.frameCount >= currentFrameDelay) {
             this.frameCount = 0;
             this.updateAnimationFrame();
+        }
+
+        // Decrement skill cooldown
+        if (this.skillCooldown > 0) {
+            this.skillCooldown--;
         }
     }
 

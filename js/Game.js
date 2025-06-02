@@ -33,6 +33,10 @@ class Game {
 
         // Goblin enemies
         this.goblins = [];
+        this.currentWave = 1;
+        this.maxWaves = 1; // Sadece bir dalga
+        this.wavesCleared = 0;
+        this.isWaveInProgress = false;
 
         this.isPlayerMoving = false;
         this.movementSoundPlaying = false;
@@ -52,11 +56,66 @@ class Game {
             maxX: 0,
             set: false,
         };
+
+        // Player hurt cooldown
+        this.playerHurtCooldown = 0;
+        this.playerHurtCooldownMax = 240; // 4 seconds at 60 FPS
+
+        this.playerHealth = 100;
+        this.playerMaxHealth = 100;
+        this.isDead = false;
+        this.consecutiveHits = 0; // Ardışık vuruş sayacı
+
+        // Yeniden başlatma butonu
+        this.reviveButton = document.createElement("button");
+        this.reviveButton.textContent = "Tekrar Oyna";
+        this.reviveButton.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+            z-index: 1000;
+        `;
+        this.reviveButton.addEventListener("click", () => this.restartGame());
+        document.body.appendChild(this.reviveButton);
+    }
+
+    restartGame() {
+        this.playerHealth = this.playerMaxHealth;
+        this.isDead = false;
+        this.reviveButton.style.display = "none";
+        this.gameRunning = true;
+        this.consecutiveHits = 0;
+
+        // Oyuncuyu başlangıç pozisyonuna getir
+        if (this.player) {
+            this.player.x = this.canvas.width * 0.2;
+            this.player.y = this.canvas.height - this.player.height - 50;
+        }
     }
 
     async init() {
+        const loaderContainer = document.getElementById("loaderContainer");
         this.canvas = document.getElementById("gameCanvas");
         this.ctx = this.canvas.getContext("2d");
+
+        // Tüm yükleme işlemleri tamamlandıktan sonra yükleme ekranını kaldır
+        window.addEventListener("load", () => {
+            setTimeout(() => {
+                loaderContainer.classList.add("loader-hidden");
+                setTimeout(() => {
+                    loaderContainer.style.display = "none";
+                }, 500);
+            }, 1000);
+        });
 
         window.addEventListener("keydown", this.handleKeyDown.bind(this));
         window.addEventListener("keyup", this.handleKeyUp.bind(this));
@@ -82,7 +141,6 @@ class Game {
         await this.createBoat();
         await this.createSplash();
         await this.createCaptain();
-        await this.createGoblins();
 
         setTimeout(() => {
             if (this.boat) {
@@ -254,34 +312,99 @@ class Game {
 
     async createGoblins() {
         try {
-            // Create a few goblins at different positions on the boat
-            const goblinPositions = [
-                {
-                    x: this.canvas.width * 0.2,
-                    y: this.canvas.height * 0.6 + 0,
-                }, // Added +0
-                {
-                    x: this.canvas.width * 0.8,
-                    y: this.canvas.height * 0.6 + 0,
-                }, // Added +0
-                {
-                    x: this.canvas.width * 0.5,
-                    y: this.canvas.height * 0.7 + 0,
-                }, // Added +0
-            ];
+            // Wait for player to be created first
+            if (!this.player) {
+                console.warn("Player not created yet, cannot position goblins");
+                return;
+            }
 
-            for (const pos of goblinPositions) {
-                const goblin = new Goblin(pos.x, pos.y, 120, 120); // Explicitly set size
+            // Use player movement boundaries for goblin placement
+            const minX = this.playerBoundaries.minX;
+            const maxX = this.playerBoundaries.maxX;
+            const goblinWidth = 160;
+            const goblinHeight = 160;
+            const groundY =
+                this.player.y + this.player.height - goblinHeight - 30; // 30px higher
 
-                // Load goblin animations
-                await goblin.loadAnimations(this.goblinJsonPath);
-
+            // Place 3 goblins at random X positions within boundaries
+            const goblinCount = 3;
+            for (let i = 0; i < goblinCount; i++) {
+                // Ensure goblin stays within boundaries
+                const x = Math.random() * (maxX - minX - goblinWidth) + minX;
+                const goblin = new Goblin(
+                    x,
+                    groundY,
+                    goblinWidth,
+                    goblinHeight
+                );
+                await goblin.loadAnimations(
+                    "assets/enemy/animation_goblin.json"
+                );
                 this.goblins.push(goblin);
             }
 
-            console.log(`Created ${this.goblins.length} goblins`);
+            this.goblins.length;
         } catch (error) {
             console.error("Error creating goblins:", error);
+        }
+    }
+
+    spawnGoblinsForWave() {
+        const goblinsPerWave = 3; // Sabit 3 goblin
+        const spacing = 150; // Goblinler arası mesafe artırıldı
+
+        // Goblinkeri senkron olarak oluştur
+        const spawnGoblins = async () => {
+            // Tekneyi referans al
+            let spawnY;
+            if (this.boat) {
+                spawnY = this.boat.y + this.boat.height * 0.3;
+            } else {
+                spawnY = this.canvas.height * 0.65;
+            }
+
+            // Goblinkeri ekranın sağ yarısına dengeli dağıt
+            const startX = this.canvas.width * 0.6; // Ekranın %60'ından başla
+            for (let i = 0; i < goblinsPerWave; i++) {
+                const x = startX + i * spacing;
+                const goblin = new Goblin(x, spawnY);
+                await goblin.loadAnimations(this.goblinJsonPath);
+                this.goblins.push(goblin);
+            }
+            this.isWaveInProgress = true;
+        };
+
+        spawnGoblins();
+    }
+
+    checkWaveCompletion() {
+        // Only check if wave is in progress and all goblins are dead (not just removed)
+        if (
+            !this.isWaveInProgress ||
+            this.goblins.some((goblin) => !goblin.isDead)
+        ) {
+            return;
+        }
+
+        // Make sure all goblins are fully removed before proceeding
+        if (this.goblins.length > 0) {
+            return;
+        }
+
+        // Wave completed, prepare for next wave
+        this.wavesCleared++;
+        this.isWaveInProgress = false;
+
+        if (this.currentWave < this.maxWaves) {
+            const delayBetweenWaves = 6000; // 6 seconds between waves
+            this.currentWave++;
+            setTimeout(() => {
+                if (!this.isWaveInProgress) {
+                    // Double check to prevent double spawning
+                    this.spawnGoblinsForWave();
+                }
+            }, delayBetweenWaves);
+        } else {
         }
     }
 
@@ -497,21 +620,21 @@ class Game {
         switch (characterType.toLowerCase()) {
             case "paladin":
                 player = new Paladin(0, 0);
-                player.x = (this.canvas.width - player.width) / 2;
+                player.x = this.canvas.width * 0.2; // Ekranın sol tarafına yerleştir
                 player.y = this.canvas.height - player.height - 50;
                 this.player = player;
                 break;
 
             case "rogue":
                 player = new Rogue(0, 0);
-                player.x = (this.canvas.width - player.width) / 2;
+                player.x = this.canvas.width * 0.2; // Ekranın sol tarafına yerleştir
                 player.y = this.canvas.height - player.height - 50;
                 this.player = player;
                 break;
 
             case "mage":
                 player = new Mage(0, 0);
-                player.x = (this.canvas.width - player.width) / 2;
+                player.x = this.canvas.width * 0.2; // Ekranın sol tarafına yerleştir
                 player.y = this.canvas.height - player.height - 50;
                 this.player = player;
                 break;
@@ -623,20 +746,16 @@ class Game {
     // Toggle hitbox display
     toggleHitboxes() {
         window.showHitboxes = !window.showHitboxes;
-        console.log(`Hitboxes ${window.showHitboxes ? "shown" : "hidden"}`);
     }
 
     // Toggle aim visualization
     toggleAimVisualization() {
         window.showAimDebug = !window.showAimDebug;
-        console.log(`Aim debug ${window.showAimDebug ? "shown" : "hidden"}`);
     }
+
     // Toggle goblin debug
     toggleGoblinDebug() {
         window.showHitboxes = !window.showHitboxes;
-        console.log(
-            `Goblin debug ${window.showHitboxes ? "enabled" : "disabled"}`
-        );
     }
 
     // Create a projectile for ranged attacks
@@ -876,6 +995,35 @@ class Game {
         });
     }
 
+    playPlayerHurtSound() {
+        const hurtSoundNumber = Math.floor(Math.random() * 3) + 1; // Random number between 1-3
+        const hurtSound = new Audio(
+            `assets/audio/paladin_hurt_0${hurtSoundNumber}.wav`
+        );
+        hurtSound.volume = 0.7;
+        hurtSound.play().catch(() => {
+            // Silently handle error
+        });
+    }
+
+    playMeleeImpactSound() {
+        // Only play if we haven't played an impact sound in the last 100ms
+        if (
+            !this.lastImpactSoundTime ||
+            Date.now() - this.lastImpactSoundTime > 100
+        ) {
+            const impactNumber = Math.floor(Math.random() * 3) + 1; // Random number between 1-3
+            const impactSound = new Audio(
+                `assets/audio/melee_impact_0${impactNumber}.wav`
+            );
+            impactSound.volume = 0.7;
+            impactSound.play().catch(() => {
+                // Silently handle error
+            });
+            this.lastImpactSoundTime = Date.now();
+        }
+    }
+
     handleMouseMove(e) {
         // Get mouse position relative to canvas
         const rect = this.canvas.getBoundingClientRect();
@@ -886,9 +1034,6 @@ class Game {
     handleMouseDown(e) {
         // Only handle left mouse button (button 0)
         if (e.button === 0 && this.player) {
-            console.log("Mouse down detected");
-
-            // Set mouse down flag
             this.isMouseDown = true;
 
             // Get mouse position relative to canvas
@@ -896,38 +1041,25 @@ class Game {
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
 
-            console.log(`Mouse position: (${mouseX}, ${mouseY})`);
-            console.log(`Player type: ${this.player.constructor.name}`);
-
             // Trigger attack immediately
             if (this.player.attack) {
-                console.log("Calling player.attack()");
+                if (this.player.skillCooldown <= 0) {
+                    const attackResult = this.player.attack(mouseX, mouseY);
 
-                // Call the new attack method with mouse coordinates
-                const attackResult = this.player.attack(mouseX, mouseY);
+                    if (attackResult.success) {
+                        // Play attack sound
+                        this.playAttackSound(attackResult.isRanged);
+                        this.player.skillCooldown = 300; // 5 saniye (60fps * 5)
 
-                console.log(`Attack result: ${JSON.stringify(attackResult)}`);
-
-                if (attackResult.success) {
-                    console.log(
-                        `Attack successful, isRanged: ${attackResult.isRanged}`
-                    );
-
-                    // Play attack sound
-                    this.playAttackSound(attackResult.isRanged);
-
-                    // Create projectile for ranged attacks
-                    if (attackResult.isRanged) {
-                        this.createProjectile(
-                            attackResult.angle,
-                            attackResult.attackType
-                        );
+                        // Create projectile for ranged attacks
+                        if (attackResult.isRanged) {
+                            this.createProjectile(
+                                attackResult.angle,
+                                attackResult.attackType
+                            );
+                        }
                     }
-                } else {
-                    console.log("Attack failed");
                 }
-            } else {
-                console.log("player.attack method not found");
             }
         }
     }
@@ -974,16 +1106,7 @@ class Game {
         sound.volume = 0.7;
 
         sound.play().catch(() => {
-            // If ranged sound fails, fall back to melee_01
-            if (isRanged) {
-                const fallbackSound = new Audio(
-                    `assets/audio/${prefix}_melee_01.wav`
-                );
-                fallbackSound.volume = 0.7;
-                fallbackSound.play().catch(() => {
-                    // Silently handle error
-                });
-            }
+            /* Silently handle error */
         });
     }
 
@@ -1090,7 +1213,31 @@ class Game {
         }
     }
 
+    playerTakeDamage(damage) {
+        if (this.isDead) return;
+
+        this.consecutiveHits++;
+        if (this.consecutiveHits >= 6) {
+            // Her 6 vuruşta bir ses çal
+            this.playPlayerHurtSound();
+            this.consecutiveHits = 0;
+        }
+
+        this.playerHealth -= damage;
+        if (this.playerHealth <= 0) {
+            this.playerHealth = 0;
+            this.isDead = true;
+            this.gameRunning = false;
+            this.reviveButton.style.display = "block";
+        }
+    }
+
     update() {
+        // Update player hurt cooldown
+        if (this.playerHurtCooldown > 0) {
+            this.playerHurtCooldown--;
+        }
+
         if (this.boat) {
             this.boat.update();
         }
@@ -1174,6 +1321,11 @@ class Game {
                     this.player.initialY = this.player.y;
                 }
             }
+
+            // Update goblin ground positions to match player's bottom height
+            for (const goblin of this.goblins) {
+                goblin.updateGroundPosition(this.player);
+            }
         }
 
         try {
@@ -1213,31 +1365,42 @@ class Game {
             }
         }
 
+        // Check for wave completion
+        if (this.isWaveInProgress && this.goblins.length === 0) {
+            this.isWaveInProgress = false;
+            this.wavesCleared++;
+
+            if (this.currentWave < this.maxWaves) {
+                this.currentWave++;
+                setTimeout(() => {
+                    this.spawnGoblinsForWave();
+                }, 1500);
+            }
+        }
+
         // Update goblins
         for (let i = this.goblins.length - 1; i >= 0; i--) {
             const goblin = this.goblins[i];
             goblin.update(this.player);
 
-            // Remove goblins marked for removal (faded away)
             if (goblin.shouldRemove) {
                 this.goblins.splice(i, 1);
-                console.log("Goblin removed from game");
                 continue;
             }
 
-            // Check collision with projectiles
-            for (let j = this.projectiles.length - 1; j >= 0; j--) {
-                const projectile = this.projectiles[j];
-                if (projectile.active && goblin.checkCollision(projectile)) {
-                    // Goblin takes damage
-                    goblin.takeDamage(1);
-
-                    // Remove projectile
-                    this.projectiles.splice(j, 1);
-
-                    console.log(
-                        `Goblin hit by projectile! Health: ${goblin.health}`
-                    );
+            // Check collision with projectiles only for alive goblins
+            if (!goblin.isDead) {
+                for (let j = this.projectiles.length - 1; j >= 0; j--) {
+                    const projectile = this.projectiles[j];
+                    if (
+                        projectile.active &&
+                        goblin.checkCollision(projectile)
+                    ) {
+                        // Goblin takes damage
+                        goblin.takeDamage(1);
+                        // Remove projectile
+                        this.projectiles.splice(j, 1);
+                    }
                 }
             }
 
@@ -1248,7 +1411,6 @@ class Game {
                 !this.player.isRangedAttack &&
                 goblin.health > 0
             ) {
-                // Check if player is in melee range and the attack just started
                 const playerCenterX = this.player.x + this.player.width / 2;
                 const playerCenterY = this.player.y + this.player.height / 2;
                 const goblinCenterX = goblin.x + goblin.width / 2;
@@ -1259,16 +1421,22 @@ class Game {
                         Math.pow(playerCenterY - goblinCenterY, 2)
                 );
 
-                // Check if goblin is in melee range (adjust range as needed)
+                // Check if goblin is in melee range
                 if (distance <= 100) {
-                    // Only damage if this is a new attack (prevent multiple hits per attack)
+                    // Only damage if this is a new attack
                     if (!goblin.hitByCurrentAttack) {
                         goblin.takeDamage(1);
                         goblin.hitByCurrentAttack = true;
 
-                        console.log(
-                            `Goblin hit by melee! Health: ${goblin.health}`
+                        // Play random melee impact sound
+                        const impactNumber = Math.floor(Math.random() * 3) + 1;
+                        const impactSound = new Audio(
+                            `assets/audio/melee_impact_0${impactNumber}.wav`
                         );
+                        impactSound.volume = 0.7;
+                        impactSound.play().catch(() => {
+                            /* Silently handle error */
+                        });
 
                         // Reset hit flag when attack ends
                         setTimeout(() => {
@@ -1278,16 +1446,48 @@ class Game {
                 }
             }
 
-            // Check if goblin can attack player and apply damage
-            if (goblin.canAttackPlayer(this.player) && goblin.health > 0) {
-                // Here you could implement player taking damage
-                // For now, just log the attack
-                console.log("Goblin attacks player!");
+            // Check if player is using skill and damage nearby goblins
+            if (
+                this.player &&
+                this.player.constructor.name === "Paladin" &&
+                this.player.isUsingSmite
+            ) {
+                if (
+                    goblin.isInSkillRange(this.player, 200) &&
+                    !goblin.hitByCurrentSkill
+                ) {
+                    const smiteDamage = 3;
+                    goblin.health = Math.max(0, goblin.health - smiteDamage);
+                    goblin.hitByCurrentSkill = true;
 
-                // You can add player damage logic here:
-                // this.player.takeDamage(1);
+                    if (goblin.health <= 0) {
+                        goblin.isDead = true;
+                        goblin.state = "koed";
+                        goblin.koTimer = 0;
+                        goblin.dieSound.currentTime = 0;
+                        goblin.dieSound.play().catch(() => {
+                            /* Silently handle error */
+                        });
+                    }
+
+                    setTimeout(() => {
+                        goblin.hitByCurrentSkill = false;
+                    }, 1000);
+                }
+            }
+
+            // Check if goblin can attack player
+            if (goblin.canAttackPlayer(this.player) && goblin.health > 0) {
+                if (this.playerHurtCooldown <= 0 && goblin.attackTimer <= 0) {
+                    this.playPlayerHurtSound();
+                    this.playerHurtCooldown = this.playerHurtCooldownMax;
+                    goblin.attackTimer = goblin.attackCooldown;
+                }
             }
         }
+
+        // Check wave completion
+        this.checkWaveCompletion();
     }
 
     render() {

@@ -90,20 +90,6 @@
                 null
             ],
             "loop": [
-                "../Goblin/742.svg",
-                "../Goblin/762.svg"
-            ],
-            "end": [
-                null,
-                null
-            ]
-        },
-        "fourth": {
-            "start": [
-                null,
-                null
-            ],
-            "loop": [
                 "../Goblin/763.svg",
                 "../Goblin/781.svg"
             ],
