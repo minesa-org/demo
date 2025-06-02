@@ -1379,6 +1379,8 @@ class Game {
         }
 
         // Update goblins
+        let meleeHitSoundPlayed = false; // Track if we've played a melee hit sound this frame
+
         for (let i = this.goblins.length - 1; i >= 0; i--) {
             const goblin = this.goblins[i];
             goblin.update(this.player);
@@ -1422,13 +1424,12 @@ class Game {
                 );
 
                 // Check if goblin is in melee range
-                if (distance <= 100) {
-                    // Only damage if this is a new attack
-                    if (!goblin.hitByCurrentAttack) {
-                        goblin.takeDamage(1);
-                        goblin.hitByCurrentAttack = true;
+                if (distance <= 100 && !goblin.hitByCurrentAttack) {
+                    goblin.takeDamage(1);
+                    goblin.hitByCurrentAttack = true;
 
-                        // Play random melee impact sound
+                    // Play melee impact sound only once per frame
+                    if (!meleeHitSoundPlayed) {
                         const impactNumber = Math.floor(Math.random() * 3) + 1;
                         const impactSound = new Audio(
                             `assets/audio/melee_impact_0${impactNumber}.wav`
@@ -1437,12 +1438,14 @@ class Game {
                         impactSound.play().catch(() => {
                             /* Silently handle error */
                         });
-
-                        // Reset hit flag when attack ends
-                        setTimeout(() => {
-                            goblin.hitByCurrentAttack = false;
-                        }, 500);
+                        meleeHitSoundPlayed = true;
                     }
+
+                    // Reset hit flag when player's attack animation ends
+                    // Using shorter timer that matches the attack animation duration
+                    setTimeout(() => {
+                        goblin.hitByCurrentAttack = false;
+                    }, 300); // Reduced from 500ms to 300ms to better match attack timing
                 }
             }
 
@@ -1450,38 +1453,53 @@ class Game {
             if (
                 this.player &&
                 this.player.constructor.name === "Paladin" &&
-                this.player.isUsingSmite
+                this.player.isUsingSmite &&
+                this.player.currentAnimation === "smite_3"
             ) {
                 if (
                     goblin.isInSkillRange(this.player, 200) &&
-                    !goblin.hitByCurrentSkill
+                    !goblin.hitByCurrentSkill &&
+                    goblin.health > 0
                 ) {
-                    const smiteDamage = 3;
-                    goblin.health = Math.max(0, goblin.health - smiteDamage);
+                    const smiteDamage = 1;
+                    goblin.takeDamage(smiteDamage);
                     goblin.hitByCurrentSkill = true;
 
-                    if (goblin.health <= 0) {
-                        goblin.isDead = true;
-                        goblin.state = "koed";
-                        goblin.koTimer = 0;
-                        goblin.dieSound.currentTime = 0;
-                        goblin.dieSound.play().catch(() => {
-                            /* Silently handle error */
-                        });
-                    }
+                    // Play random melee impact sound
+                    const impactNumber = Math.floor(Math.random() * 3) + 1;
+                    const impactSound = new Audio(
+                        `assets/audio/melee_impact_0${impactNumber}.wav`
+                    );
+                    impactSound.volume = 0.7;
+                    impactSound.play().catch(() => {
+                        /* Silently handle error */
+                    });
 
+                    // Reset hitByCurrentSkill after a delay
                     setTimeout(() => {
                         goblin.hitByCurrentSkill = false;
-                    }, 1000);
+                    }, 1500);
                 }
             }
 
             // Check if goblin can attack player
             if (goblin.canAttackPlayer(this.player) && goblin.health > 0) {
-                if (this.playerHurtCooldown <= 0 && goblin.attackTimer <= 0) {
-                    this.playPlayerHurtSound();
-                    this.playerHurtCooldown = this.playerHurtCooldownMax;
-                    goblin.attackTimer = goblin.attackCooldown;
+                if (this.playerHurtCooldown <= 0) {
+                    // Start goblin's attack animation if not already attacking
+                    if (!goblin.isAttacking && goblin.canAttack) {
+                        goblin.startAttack();
+                    }
+
+                    // Only deal damage during the attack animation's active frames
+                    if (
+                        goblin.isAttacking &&
+                        goblin.attackTimer >
+                            goblin.attackCooldown - goblin.attackDuration
+                    ) {
+                        this.playerTakeDamage(1);
+                        this.playPlayerHurtSound();
+                        this.playerHurtCooldown = this.playerHurtCooldownMax;
+                    }
                 }
             }
         }
