@@ -315,6 +315,13 @@ class Goblin {
         this.animationPhase = "loop";
         this.phaseFrameIndex = 0;
         this.currentMeleeAttack = (this.currentMeleeAttack + 1) % 3;
+
+        // Play goblin melee attack sound
+        const attackSound = new Audio("assets/audio/enemy_melee.wav");
+        attackSound.volume = 0.2;
+        attackSound.play().catch(() => {
+            // Silently handle error
+        });
     }
 
     takeDamage(damage = 1) {

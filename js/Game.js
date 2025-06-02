@@ -86,6 +86,8 @@ class Game {
         `;
         this.reviveButton.addEventListener("click", () => this.restartGame());
         document.body.appendChild(this.reviveButton);
+
+        this.meleeImpactPlayedThisAttack = false;
     }
 
     restartGame() {
@@ -969,6 +971,14 @@ class Game {
                 }
             }
         }
+
+        // 'R' key to respawn goblins
+        if (e.key.toLowerCase() === "r") {
+            // Reset any existing goblins
+            this.goblins = [];
+            // Spawn new goblins
+            this.spawnGoblinsForWave();
+        }
     }
 
     handleKeyUp(e) {
@@ -1007,12 +1017,13 @@ class Game {
     }
 
     playMeleeImpactSound() {
-        // Only play if we haven't played an impact sound in the last 100ms
+        const currentTime = Date.now();
+        // Set a longer cooldown to prevent sound overlap
         if (
             !this.lastImpactSoundTime ||
-            Date.now() - this.lastImpactSoundTime > 100
+            currentTime - this.lastImpactSoundTime >= 200
         ) {
-            const impactNumber = Math.floor(Math.random() * 3) + 1; // Random number between 1-3
+            const impactNumber = Math.floor(Math.random() * 3) + 1;
             const impactSound = new Audio(
                 `assets/audio/melee_impact_0${impactNumber}.wav`
             );
@@ -1020,7 +1031,7 @@ class Game {
             impactSound.play().catch(() => {
                 // Silently handle error
             });
-            this.lastImpactSoundTime = Date.now();
+            this.lastImpactSoundTime = currentTime;
         }
     }
 
@@ -1322,6 +1333,11 @@ class Game {
                 }
             }
 
+            // Saldırı animasyonu başında flag'i resetle
+            if (!this.player.isAttacking) {
+                this.meleeImpactPlayedThisAttack = false;
+            }
+
             // Update goblin ground positions to match player's bottom height
             for (const goblin of this.goblins) {
                 goblin.updateGroundPosition(this.player);
@@ -1423,29 +1439,24 @@ class Game {
                         Math.pow(playerCenterY - goblinCenterY, 2)
                 );
 
-                // Check if goblin is in melee range
-                if (distance <= 100 && !goblin.hitByCurrentAttack) {
+                // Check if goblin is in melee range and hasn't been hit by this attack
+                if (
+                    distance <= 100 &&
+                    !goblin.hitByCurrentAttack &&
+                    this.player.isAttacking
+                ) {
                     goblin.takeDamage(1);
                     goblin.hitByCurrentAttack = true;
 
-                    // Play melee impact sound only once per frame
-                    if (!meleeHitSoundPlayed) {
-                        const impactNumber = Math.floor(Math.random() * 3) + 1;
-                        const impactSound = new Audio(
-                            `assets/audio/melee_impact_0${impactNumber}.wav`
-                        );
-                        impactSound.volume = 0.7;
-                        impactSound.play().catch(() => {
-                            /* Silently handle error */
-                        });
-                        meleeHitSoundPlayed = true;
+                    // Sadece bir kez impact sesi çal
+                    if (!this.meleeImpactPlayedThisAttack) {
+                        this.playMeleeImpactSound();
+                        this.meleeImpactPlayedThisAttack = true;
                     }
 
-                    // Reset hit flag when player's attack animation ends
-                    // Using shorter timer that matches the attack animation duration
                     setTimeout(() => {
                         goblin.hitByCurrentAttack = false;
-                    }, 300); // Reduced from 500ms to 300ms to better match attack timing
+                    }, 400);
                 }
             }
 
