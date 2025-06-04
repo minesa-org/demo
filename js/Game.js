@@ -352,8 +352,7 @@ class Game {
     }
 
     spawnGoblinsForWave() {
-        const goblinsPerWave = 3; // Sabit 3 goblin
-        const spacing = 150; // Goblinler arası mesafe artırıldı
+        const goblinsPerWave = 1; // Artık sadece 1 goblin
 
         // Goblinkeri senkron olarak oluştur
         const spawnGoblins = async () => {
@@ -365,10 +364,10 @@ class Game {
                 spawnY = this.canvas.height * 0.65;
             }
 
-            // Goblinkeri ekranın sağ yarısına dengeli dağıt
-            const startX = this.canvas.width * 0.6; // Ekranın %60'ından başla
+            // Goblini ekranın sağ yarısının ortasına yerleştir
+            const startX = this.canvas.width * 0.7; // Sağda, tek goblin için uygun bir oran
             for (let i = 0; i < goblinsPerWave; i++) {
-                const x = startX + i * spacing;
+                const x = startX;
                 const goblin = new Goblin(x, spawnY);
                 await goblin.loadAnimations(this.goblinJsonPath);
                 this.goblins.push(goblin);
