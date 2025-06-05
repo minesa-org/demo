@@ -100,7 +100,7 @@ class Game {
 
         this.score = 0; // Track killed goblins
         this.lastSpawnTime = 0; // Track last spawn time
-        this.spawnInterval = 5000; // Spawn interval in milliseconds (5 seconds)
+        this.spawnInterval = 10000; // Spawn interval in milliseconds (10 seconds)
         this.goblinScoreState = new WeakMap(); // Track goblin score state
     }
 

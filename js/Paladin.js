@@ -20,7 +20,7 @@ class Paladin extends Player {
         // Add smite skill properties
         this.isUsingSmite = false;
         this.smiteCooldown = 0;
-        this.smiteMaxCooldown = 360; // 6 seconds at 60 FPS
+        this.smiteMaxCooldown = 200;
 
         // Add basic attack cooldown property - SPECIFIC TO PALADIN
         this.basicAttackCooldownMax = 40; // Set to a higher value (e.g., 40, 50) for slower basic attacks. Original was effectively 20 frames.
@@ -87,6 +87,15 @@ class Paladin extends Player {
         return super.meleeAttack();
     }
 
+    // Aynı şekilde ranged saldırı için de engelleme eklenmeli
+    rangedAttack(mouseX, mouseY) {
+        if (this.isUsingSmite) {
+            console.log("Smite active, cannot ranged attack.");
+            return { success: false, isRanged: true };
+        }
+        return super.rangedAttack(mouseX, mouseY);
+    }
+
     // Method to update cooldowns
     update() {
         // Call the parent update method
@@ -108,11 +117,9 @@ class Paladin extends Player {
 
     // Method to use the smite skill
     useSmite() {
-        // Don't allow using smite while jumping, attacking, or on cooldown
-        if (this.isJumping || this.isAttacking || this.smiteCooldown > 0) {
-            +console.log(
-                "Cannot use Smite: jumping, attacking, or on cooldown."
-            );
+        // Only check for jumping and smite's own cooldown, not basic attack status
+        if (this.isJumping || this.smiteCooldown > 0) {
+            +console.log("Cannot use Smite: jumping or on cooldown.");
             return false;
         }
 
