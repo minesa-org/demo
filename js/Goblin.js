@@ -10,7 +10,7 @@ class Goblin {
         this.effectiveHeightRatio = 0.35; // 35% of visual height
         this.verticalOffset = 35; // Pixels to offset sprite upward to center with hitbox
 
-        this.maxHealth = 10;
+        this.maxHealth = 4;
         this.health = this.maxHealth;
         this.isDead = false;
         this.shouldRemove = false;
@@ -26,7 +26,7 @@ class Goblin {
 
         this.animations = {};
         this.frameCounter = 0;
-        this.frameDelay = 4;
+        this.frameDelay = 3;
         this.animationPhase = "loop";
         this.phaseFrameIndex = 0;
 

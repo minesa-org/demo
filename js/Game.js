@@ -88,6 +88,15 @@ class Game {
         document.body.appendChild(this.reviveButton);
 
         this.meleeImpactPlayedThisAttack = false;
+
+        // Add FPS control properties
+        this.fps = 60;
+        this.frameInterval = 1000 / this.fps; // Time between frames in ms
+        this.lastFrameTime = 0;
+
+        // Add new properties to track hits
+        this.meleeHitGoblins = new Set(); // Track which goblins were hit by current attack
+        this.skillHitGoblins = new Set(); // Track which goblins were hit by current skill
     }
 
     restartGame() {
@@ -725,38 +734,7 @@ class Game {
     }
 
     start() {
-        // Initialize display flags
-        window.showHitboxes = false;
-        window.showAimDebug = false;
-
-        // Add keyboard shortcuts for testing features
-        document.addEventListener("keydown", (e) => {
-            // Press 'h' to toggle hitbox display
-            if (e.key === "h") {
-                this.toggleHitboxes();
-                this.toggleAimVisualization();
-            }
-            if (e.key == "g") {
-                this.toggleGoblinDebug();
-            }
-        });
-
         requestAnimationFrame(this.gameLoop.bind(this));
-    }
-
-    // Toggle hitbox display
-    toggleHitboxes() {
-        window.showHitboxes = !window.showHitboxes;
-    }
-
-    // Toggle aim visualization
-    toggleAimVisualization() {
-        window.showAimDebug = !window.showAimDebug;
-    }
-
-    // Toggle goblin debug
-    toggleGoblinDebug() {
-        window.showHitboxes = !window.showHitboxes;
     }
 
     // Create a projectile for ranged attacks
@@ -1243,6 +1221,24 @@ class Game {
     }
 
     update() {
+        // Reset hit tracking when player is not attacking or using skill
+        if (this.player) {
+            // Reset melee hits when attack animation ends
+            if (!this.player.isAttacking && this.meleeHitGoblins.size > 0) {
+                this.meleeHitGoblins.clear();
+            }
+
+            // Reset skill hits when smite animation ends
+            if (
+                this.player.constructor.name === "Paladin" &&
+                (!this.player.isUsingSmite ||
+                    this.player.currentAnimation !== "smite_3") &&
+                this.skillHitGoblins.size > 0
+            ) {
+                this.skillHitGoblins.clear();
+            }
+        }
+
         // Update player hurt cooldown
         if (this.playerHurtCooldown > 0) {
             this.playerHurtCooldown--;
@@ -1394,8 +1390,6 @@ class Game {
         }
 
         // Update goblins
-        let meleeHitSoundPlayed = false; // Track if we've played a melee hit sound this frame
-
         for (let i = this.goblins.length - 1; i >= 0; i--) {
             const goblin = this.goblins[i];
             goblin.update(this.player);
@@ -1413,9 +1407,7 @@ class Game {
                         projectile.active &&
                         goblin.checkCollision(projectile)
                     ) {
-                        // Goblin takes damage
                         goblin.takeDamage(1);
-                        // Remove projectile
                         this.projectiles.splice(j, 1);
                     }
                 }
@@ -1426,7 +1418,8 @@ class Game {
                 this.player &&
                 this.player.isAttacking &&
                 !this.player.isRangedAttack &&
-                goblin.health > 0
+                goblin.health > 0 &&
+                !this.meleeHitGoblins.has(goblin)
             ) {
                 const playerCenterX = this.player.x + this.player.width / 2;
                 const playerCenterY = this.player.y + this.player.height / 2;
@@ -1438,24 +1431,14 @@ class Game {
                         Math.pow(playerCenterY - goblinCenterY, 2)
                 );
 
-                // Check if goblin is in melee range and hasn't been hit by this attack
-                if (
-                    distance <= 100 &&
-                    !goblin.hitByCurrentAttack &&
-                    this.player.isAttacking
-                ) {
+                if (distance <= 100) {
                     goblin.takeDamage(1);
-                    goblin.hitByCurrentAttack = true;
+                    this.meleeHitGoblins.add(goblin);
 
-                    // Sadece bir kez impact sesi çal
                     if (!this.meleeImpactPlayedThisAttack) {
                         this.playMeleeImpactSound();
                         this.meleeImpactPlayedThisAttack = true;
                     }
-
-                    setTimeout(() => {
-                        goblin.hitByCurrentAttack = false;
-                    }, 400);
                 }
             }
 
@@ -1464,31 +1447,31 @@ class Game {
                 this.player &&
                 this.player.constructor.name === "Paladin" &&
                 this.player.isUsingSmite &&
-                this.player.currentAnimation === "smite_3"
+                this.player.currentAnimation === "smite_3" &&
+                !this.skillHitGoblins.has(goblin)
             ) {
                 if (
                     goblin.isInSkillRange(this.player, 200) &&
-                    !goblin.hitByCurrentSkill &&
                     goblin.health > 0
                 ) {
-                    const smiteDamage = 1;
+                    const smiteDamage = 3; // Increased damage to 3
                     goblin.takeDamage(smiteDamage);
-                    goblin.hitByCurrentSkill = true;
+                    this.skillHitGoblins.add(goblin);
 
-                    // Play random melee impact sound
-                    const impactNumber = Math.floor(Math.random() * 3) + 1;
-                    const impactSound = new Audio(
-                        `assets/audio/melee_impact_0${impactNumber}.wav`
-                    );
-                    impactSound.volume = 0.7;
-                    impactSound.play().catch(() => {
-                        /* Silently handle error */
-                    });
-
-                    // Reset hitByCurrentSkill after a delay
-                    setTimeout(() => {
-                        goblin.hitByCurrentSkill = false;
-                    }, 1500);
+                    // Play impact sound 3 times with 0.3s delay
+                    for (let j = 0; j < 3; j++) {
+                        setTimeout(() => {
+                            const impactNumber =
+                                Math.floor(Math.random() * 3) + 1;
+                            const impactSound = new Audio(
+                                `assets/audio/melee_impact_0${impactNumber}.wav`
+                            );
+                            impactSound.volume = 0.7;
+                            impactSound.play().catch(() => {
+                                /* Silently handle error */
+                            });
+                        }, j * 300); // 300ms (0.3s) delay between each sound
+                    }
                 }
             }
 
@@ -1613,11 +1596,17 @@ class Game {
     }
 
     gameLoop(timestamp) {
-        this.lastTime = timestamp;
+        // Calculate time since last frame
+        const deltaTime = timestamp - this.lastFrameTime;
 
-        this.processInput();
-        this.update();
-        this.render();
+        // Only update if enough time has passed
+        if (deltaTime >= this.frameInterval) {
+            this.lastFrameTime = timestamp - (deltaTime % this.frameInterval);
+
+            this.processInput();
+            this.update();
+            this.render();
+        }
 
         if (this.gameRunning) {
             requestAnimationFrame(this.gameLoop.bind(this));
