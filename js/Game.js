@@ -97,6 +97,11 @@ class Game {
         // Add new properties to track hits
         this.meleeHitGoblins = new Set(); // Track which goblins were hit by current attack
         this.skillHitGoblins = new Set(); // Track which goblins were hit by current skill
+
+        this.score = 0; // Track killed goblins
+        this.lastSpawnTime = 0; // Track last spawn time
+        this.spawnInterval = 5000; // Spawn interval in milliseconds (5 seconds)
+        this.goblinScoreState = new WeakMap(); // Track goblin score state
     }
 
     restartGame() {
@@ -948,14 +953,6 @@ class Game {
                 }
             }
         }
-
-        // 'R' key to respawn goblins
-        if (e.key.toLowerCase() === "r") {
-            // Reset any existing goblins
-            this.goblins = [];
-            // Spawn new goblins
-            this.spawnGoblinsForWave();
-        }
     }
 
     handleKeyUp(e) {
@@ -1221,6 +1218,13 @@ class Game {
     }
 
     update() {
+        // Check if it's time to spawn new goblins
+        const currentTime = Date.now();
+        if (currentTime - this.lastSpawnTime >= this.spawnInterval) {
+            this.spawnGoblinsForWave();
+            this.lastSpawnTime = currentTime;
+        }
+
         // Reset hit tracking when player is not attacking or using skill
         if (this.player) {
             // Reset melee hits when attack animation ends
@@ -1408,6 +1412,14 @@ class Game {
                         goblin.checkCollision(projectile)
                     ) {
                         goblin.takeDamage(1);
+                        // Check if this hit killed the goblin
+                        if (
+                            goblin.health <= 0 &&
+                            !this.goblinScoreState.get(goblin)
+                        ) {
+                            this.score++;
+                            this.goblinScoreState.set(goblin, true);
+                        }
                         this.projectiles.splice(j, 1);
                     }
                 }
@@ -1435,6 +1447,15 @@ class Game {
                     goblin.takeDamage(1);
                     this.meleeHitGoblins.add(goblin);
 
+                    // Check if this hit killed the goblin
+                    if (
+                        goblin.health <= 0 &&
+                        !this.goblinScoreState.get(goblin)
+                    ) {
+                        this.score++;
+                        this.goblinScoreState.set(goblin, true);
+                    }
+
                     if (!this.meleeImpactPlayedThisAttack) {
                         this.playMeleeImpactSound();
                         this.meleeImpactPlayedThisAttack = true;
@@ -1456,6 +1477,14 @@ class Game {
                 ) {
                     const smiteDamage = 3; // Increased damage to 3
                     goblin.takeDamage(smiteDamage);
+                    // Check if this hit killed the goblin
+                    if (
+                        goblin.health <= 0 &&
+                        !this.goblinScoreState.get(goblin)
+                    ) {
+                        this.score++;
+                        this.goblinScoreState.set(goblin, true);
+                    }
                     this.skillHitGoblins.add(goblin);
 
                     // Play impact sound 3 times with 0.3s delay
@@ -1593,6 +1622,18 @@ class Game {
         for (const projectile of this.projectiles) {
             projectile.render(this.ctx);
         }
+
+        // Render score (on top of everything)
+        this.ctx.save();
+        this.ctx.fillStyle = "#ffffff";
+        this.ctx.font = "bold 32px Arial";
+        this.ctx.textBaseline = "top";
+        this.ctx.strokeStyle = "#000000";
+        this.ctx.lineWidth = 3;
+        const scoreText = `Killed Goblins: ${this.score}`;
+        this.ctx.strokeText(scoreText, 20, 20);
+        this.ctx.fillText(scoreText, 20, 20);
+        this.ctx.restore();
     }
 
     gameLoop(timestamp) {
