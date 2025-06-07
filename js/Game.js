@@ -1536,7 +1536,11 @@ class Game {
         this.ctx.fillStyle = "#0e031b";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        if (this.backgroundImage && this.backgroundImage.complete) {
+        if (
+            this.backgroundImage &&
+            this.backgroundImage.complete &&
+            this.backgroundImage.naturalWidth > 0
+        ) {
             const bgRatio =
                 this.backgroundImage.width / this.backgroundImage.height;
             const canvasRatio = this.canvas.width / this.canvas.height;

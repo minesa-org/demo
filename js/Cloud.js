@@ -121,7 +121,8 @@ class Cloud {
         const framePath = this.currentFrames[this.currentFrameIndex];
         const sprite = this.sprites[framePath];
 
-        if (sprite && sprite.complete) {
+        // Görselin hem yüklü hem de bozuk olmadığından emin ol
+        if (sprite && sprite.complete && sprite.naturalWidth > 0) {
             ctx.drawImage(sprite, this.x, this.y, this.width, this.height);
         }
     }
