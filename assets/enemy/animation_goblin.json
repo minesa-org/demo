@@ -1,0 +1,101 @@
+{
+    "ready": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Goblin/74.svg",
+            "../Goblin/116.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "run": {
+        "start": [
+            "../Goblin/142.svg",
+            "../Goblin/148.svg"
+        ],
+        "loop": [
+            "../Goblin/149.svg",
+            "../Goblin/161.svg"
+        ],
+        "end": [
+            "../Goblin/162.svg",
+            "../Goblin/174.svg"
+        ]
+    },
+    "hit_react": {
+        "start": [
+            "../Goblin/255.svg",
+            "../Goblin/266.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "koed": {
+        "start": [
+            "../Goblin/268.svg",
+            "../Goblin/332.svg"
+        ],
+        "loop": [
+            null,
+            null
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "melee": {
+        "first": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Goblin/501.svg",
+                "../Goblin/534.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "second": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Goblin/482.svg",
+                "../Goblin/499.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "third": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Goblin/763.svg",
+                "../Goblin/781.svg"
+            ],
+            "end": [
+                null
+            ]
+        }
+    }
+}

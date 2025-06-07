@@ -1,0 +1,28 @@
+{
+    "splash": {
+        "_1": {
+            "start": [
+                "./assets/splashes/_1/1.svg",
+                "./assets/splashes/_1/18.svg"
+            ]
+        },
+        "_2": {
+            "start": [
+                "./assets/splashes/_2/1.svg",
+                "./assets/splashes/_2/15.svg"
+            ]
+        },
+        "_3": {
+            "start": [
+                "./assets/splashes/_3/1.svg",
+                "./assets/splashes/_3/17.svg"
+            ]
+        },
+        "_4": {
+            "start": [
+                "./assets/splashes/_4/1.svg",
+                "./assets/splashes/_4/7.svg"
+            ]
+        }
+    }
+}

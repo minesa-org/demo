@@ -1,0 +1,160 @@
+{
+    "ready": {
+        "start": [
+            null,
+            null
+        ],
+        "loop": [
+            "../Mage/2.svg",
+            "../Mage/48.svg"
+        ],
+        "end": [
+            null,
+            null
+        ]
+    },
+    "run": {
+        "start": [
+            "../Mage/390.svg",
+            "../Mage/398.svg"
+        ],
+        "loop": [
+            "../Mage/399.svg",
+            "../Mage/412.svg"
+        ],
+        "end": [
+            "../Mage/413.svg",
+            "../Mage/428.svg"
+        ]
+    },
+    "jump": {
+        "start": [
+            "../Mage/550.svg",
+            "../Mage/556.svg"
+        ],
+        "loop": [
+            "../Mage/557.svg",
+            "../Mage/581.svg"
+        ],
+        "end": [
+            "../Mage/582.svg",
+            "../Mage/597.svg"
+        ]
+    },
+    "melee": {
+        "first": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Mage/1459.svg",
+                "../Mage/1479.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "second": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Mage/1481.svg",
+                "../Mage/1496.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "third": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Mage/1498.svg",
+                "../Mage/1514.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        }
+    },
+    "ranged": {
+        "default": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Mage/1583.svg",
+                "../Mage/1598.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "up_45": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Mage/1600.svg",
+                "../Mage/1615.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "up_90": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Mage/1617.svg",
+                "../Mage/1632.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "down_45": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Mage/1634.svg",
+                "../Mage/1650.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        },
+        "down_90": {
+            "start": [
+                null,
+                null
+            ],
+            "loop": [
+                "../Mage/1651.svg",
+                "../Mage/1666.svg"
+            ],
+            "end": [
+                null,
+                null
+            ]
+        }
+    }
+}

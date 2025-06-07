@@ -1,67 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0" />
+        <title>Dungeon Blitz: Remake (Lost at Sea)</title>
 
-<head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <meta charset="utf-8" />
-    <meta http-equiv="pragma" content="no-cache" />
+        <link
+            rel="stylesheet"
+            href="style.css" />
+        <link
+            rel="stylesheet"
+            href="css/loader.css" />
+    </head>
+    <body>
+        <div
+            class="loader-container"
+            id="loaderContainer">
+            <div class="loader"></div>
+        </div>
+        <div class="game-container">
+            <canvas
+                id="gameCanvas"
+                width="780"
+                height="580"></canvas>
+        </div>
 
-    <title>GameMaker Game</title>
+        <audio
+            id="backgroundMusic"
+            loop>
+            <source
+                src="assets/audio/background_music_normal.mp3"
+                type="audio/mpeg" />
 
-    <style>
-        /* Ensure the body and HTML occupy the entire viewport */
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #000;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+            Your browser does not support the audio element.
+        </audio>
 
-        /* Container styling */
-        .gm4html5_div_class {
-            width: 100%;
-            height: 100%;
-        }
+        <audio
+            id="movementSound"
+            loop>
+            <source
+                src="assets/audio/sound_movement_wood.wav"
+                type="audio/mpeg" />
+            Your browser does not support the audio element.
+        </audio>
 
-        /* Prevent canvas overflow and ensure scaling */
-        canvas {
-            display: block;
-            image-rendering: optimizeSpeed;
-            -webkit-interpolation-mode: nearest-neighbor;
-            -ms-touch-action: none;
-            touch-action: none;
-        }
-    </style>
-</head>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const audio = document.getElementById("backgroundMusic");
+                const audioIndicator =
+                    document.getElementById("audioIndicator");
+                const audioStatus = document.getElementById("audioStatus");
+                const muteToggleBtn = document.getElementById("muteToggleBtn");
 
-<body>
-    <div class="gm4html5_div_class" id="gm4html5_div_id">
-        <!-- Game canvas with explicit attributes -->
-        <canvas id="canvas" width="1920" height="1080">
-            <p>Your browser doesn't support HTML5 canvas.</p>
-        </canvas>
-    </div>
+                audio.volume = 0.3;
+                let audioStarted = false;
 
-    <!-- Game script -->
-    <script type="text/javascript" src="html5game/dbz1.js?cachebust=1809559606"></script>
-    <script>
-        window.onload = GameMaker_Init;
+                const movementSound = document.getElementById("movementSound");
+                if (movementSound) {
+                    movementSound.volume = 0.7;
+                }
 
-        function resizeCanvas() {
-            const canvas = document.getElementById('canvas');
-            canvas.style.width = window.innerWidth + 'px';
-            canvas.style.height = window.innerHeight + 'px';
-        }
+                function startBackgroundMusic() {
+                    if (!audioStarted) {
+                        audio
+                            .play()
+                            .then(() => {
+                                audioStarted = true;
+                                audioIndicator.style.display = "block";
+                            })
+                            .catch(() => {});
+                    }
+                }
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-    </script>
-</body>
+                const userInteractionEvents = [
+                    "click",
+                    "keydown",
+                    "touchstart",
+                    "mousedown",
+                ];
+                userInteractionEvents.forEach((event) => {
+                    document.addEventListener(
+                        event,
+                        function () {
+                            startBackgroundMusic();
+                        },
+                        { once: true }
+                    );
+                });
 
+                window.addEventListener("load", function () {
+                    setTimeout(startBackgroundMusic, 1000);
+                });
+
+                muteToggleBtn.addEventListener("click", function () {
+                    audio.muted = !audio.muted;
+                    muteToggleBtn.textContent = audio.muted ? "🔇" : "🔊";
+                    audioStatus.textContent = audio.muted
+                        ? "♫ Muted"
+                        : "♫ Playing";
+                });
+
+                document.addEventListener("keydown", function (e) {
+                    if (e.key === "m" || e.key === "M") {
+                        audio.muted = !audio.muted;
+                        muteToggleBtn.textContent = audio.muted ? "🔇" : "🔊";
+                        audioStatus.textContent = audio.muted
+                            ? "♫ Muted"
+                            : "♫ Playing";
+                    }
+                });
+
+                audio.addEventListener("play", function () {
+                    audioIndicator.style.display = "block";
+                    audioStatus.textContent = audio.muted
+                        ? "♫ Muted"
+                        : "♫ Playing";
+                });
+
+                audio.addEventListener("pause", function () {
+                    audioStatus.textContent = "♫ Paused";
+                });
+            });
+        </script>
+
+        <script
+            src="main.js"
+            type="module"></script>
+    </body>
 </html>
